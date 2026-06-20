@@ -126,7 +126,7 @@ export default function CompanyProfilePage() {
                       alt={leader.name}
                       fill
                       sizes="224px"
-                      className="object-cover filter  transition-all duration-500"
+                      className="object-cover object-top filter  transition-all duration-500"
                       unoptimized
                     />
                   </div>
