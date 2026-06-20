@@ -18,7 +18,7 @@ const leaders = [
     name: "Mr. Amirchand Parewa",
     role: "Director",
     image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/02/Untitled-design-73-1024x1024.png",
+      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/public/People/Amirchand_Parewa.jpeg",
   },
 ];
 
@@ -126,7 +126,7 @@ export default function CompanyProfilePage() {
                       alt={leader.name}
                       fill
                       sizes="224px"
-                      className="object-cover filter grayscale hover:grayscale-0 transition-all duration-500"
+                      className="object-cover filter  transition-all duration-500"
                       unoptimized
                     />
                   </div>
