@@ -1,0 +1,145 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+
+const navigationMap = [
+  { label: "Company Profile", path: "/about" },
+  { label: "Projects", path: "/projects" },
+  { label: "Gallery", path: "/gallery" },
+];
+
+export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const currentPath = usePathname();
+
+  useEffect(() => {
+    const checkScroll = () => setIsScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", checkScroll);
+    return () => window.removeEventListener("scroll", checkScroll);
+  }, []);
+
+  return (
+    <header
+      className={`fixed top-0 left-0 w-full z-40 transition-all duration-500 ${
+        isScrolled
+          ? "bg-stone-900/95 backdrop-blur-md border-b border-white/5 py-4 shadow-xl"
+          : "bg-transparent py-7"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 sm:px-12 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <Image
+            src="https://a-bconstruction.in/wp-content/uploads/2025/01/cropped-AB-Con-Logo-1-3-80x64.png"
+            alt="A&B Construction Logo"
+            width={40}
+            height={32}
+            className="object-contain"
+            unoptimized
+          />
+          <span className="font-display font-extrabold text-sm tracking-[0.3em] text-white uppercase">
+            A&amp;B{" "}
+            <span className="text-amber-500 font-light tracking-[0.15em] transition-colors group-hover:text-amber-400">
+              CONSTRUCTION
+            </span>
+          </span>
+        </Link>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center space-x-12">
+          {navigationMap.map((node) => {
+            const isTargetActive = currentPath === node.path;
+            return (
+              <Link
+                key={node.path}
+                href={node.path}
+                className={`text-[11px] tracking-[0.2em] font-medium uppercase transition-colors hover:text-white ${
+                  isTargetActive ? "text-amber-400 font-bold" : "text-stone-400"
+                }`}
+              >
+                {node.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="hidden md:block">
+          <Link
+            href="/contact"
+            className="text-[10px] tracking-[0.2em] font-bold uppercase px-6 py-2.5 bg-amber-500 text-stone-950 hover:bg-amber-400 transition-colors"
+          >
+            Contact Us
+          </Link>
+        </div>
+
+        {/* Mobile Toggle */}
+        <button
+          onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+          className="md:hidden text-stone-400 hover:text-white p-2 transition-colors z-50 relative"
+          aria-label="Toggle Navigation"
+          aria-expanded={isDrawerOpen}
+        >
+          <div className="w-5 h-3.5 flex flex-col justify-between">
+            <span
+              className={`w-full h-px bg-current transition-transform duration-300 ${
+                isDrawerOpen ? "rotate-45 translate-y-[6px]" : ""
+              }`}
+            />
+            <span
+              className={`w-3/4 h-px bg-current self-end transition-opacity duration-300 ${
+                isDrawerOpen ? "opacity-0" : ""
+              }`}
+            />
+            <span
+              className={`w-full h-px bg-current transition-transform duration-300 ${
+                isDrawerOpen ? "-rotate-45 -translate-y-[7px]" : ""
+              }`}
+            />
+          </div>
+        </button>
+      </div>
+
+      {/* Mobile Drawer */}
+      <div
+        className={`fixed inset-y-0 right-0 w-full max-w-sm bg-stone-950 p-12 z-40 shadow-2xl transition-transform duration-500 border-l border-white/5 flex flex-col justify-between ${
+          isDrawerOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col space-y-8 mt-16">
+          {navigationMap.map((node) => {
+            const isTargetActive = currentPath === node.path;
+            return (
+              <Link
+                key={node.path}
+                href={node.path}
+                onClick={() => setIsDrawerOpen(false)}
+                className={`font-display text-2xl tracking-wide transition-colors ${
+                  isTargetActive
+                    ? "text-amber-400 font-semibold"
+                    : "text-stone-300 hover:text-amber-400"
+                }`}
+              >
+                {node.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="space-y-4">
+          <div className="h-px bg-white/5 w-full" />
+          <Link
+            href="/contact"
+            onClick={() => setIsDrawerOpen(false)}
+            className="w-full block text-center text-xs tracking-[0.2em] font-bold bg-amber-500 text-stone-950 uppercase py-4 transition-colors hover:bg-amber-400"
+          >
+            Contact Us
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}

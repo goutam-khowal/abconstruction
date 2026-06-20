@@ -1,0 +1,41 @@
+[
+  {
+    "id": "proj-001",
+    "title": "AB Imperial Heights",
+    "category": "Delivered",
+    "location": "Mumbai, Maharashtra",
+    "description": "Premium 40-storey residential skyscraper featuring luxury smart-homes, sustainable green rooftops, and advanced seismic-resistant structural frames.",
+    "imageUrl": "https://xyz-supabase-id.supabase.co/storage/v1/object/public/project-images/imperial-heights.jpg",
+    "specs": {
+      "builtUpArea": "450,000 Sq. Ft.",
+      "duration": "36 Months",
+      "concreteGrade": "M60 & M80"
+    }
+  },
+  {
+    "id": "proj-002",
+    "title": "Tech Park Horizon",
+    "category": "Ongoing",
+    "location": "Bengaluru, Karnataka",
+    "description": "Next-generation B2B IT Hub incorporating pre-engineered steel structures, glass curtain walls, and a dedicated IGBC Platinum-certified ecosystem.",
+    "imageUrl": "https://xyz-supabase-id.supabase.co/storage/v1/object/public/project-images/tech-park.jpg",
+    "specs": {
+      "builtUpArea": "1,200,000 Sq. Ft.",
+      "duration": "In Progress",
+      "concreteGrade": "M50 Self-Compacting"
+    }
+  },
+  {
+    "id": "proj-003",
+    "title": "Narmada Industrial Corridor",
+    "category": "Delivered",
+    "location": "Bharuch, Gujarat",
+    "description": "Heavy-duty industrial manufacturing assembly plant deploying massive precast concrete girders and specialized high-load flooring solutions.",
+    "imageUrl": "https://xyz-supabase-id.supabase.co/storage/v1/object/public/project-images/industrial-corridor.jpg",
+    "specs": {
+      "builtUpArea": "850,000 Sq. Ft.",
+      "duration": "24 Months",
+      "concreteGrade": "M40 Precast"
+    }
+  }
+]
