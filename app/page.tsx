@@ -112,7 +112,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="lg:col-span-5 relative h-[500px] bg-slate-100 border border-slate-200 p-2 shadow-sm">
+          {/* <div className="lg:col-span-5 relative h-[500px] bg-slate-100 border border-slate-200 p-2 shadow-sm">
             <div className="relative h-full w-full overflow-hidden">
               <Image
                 src="https://a-bconstruction.in/wp-content/uploads/2025/02/freepik__upload__13408-682x1024.jpg"
@@ -123,7 +123,7 @@ export default function HomePage() {
                 unoptimized
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
     </div>
