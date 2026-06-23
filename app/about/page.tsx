@@ -18,7 +18,7 @@ const leaders = [
     name: "Mr. Amirchand Parewa",
     role: "Director",
     image:
-      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/public/People/Amirchand_Parewa.jpeg",
+      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/public/People/Amirchand_Parewa-removebg-preview.png",
   },
 ];
 
@@ -29,7 +29,7 @@ const values = [
   },
   {
     title: "Premium Materials",
-    desc: "We use only the finest Italian marble, granite, Kota and Dholpur stones, and imported chemical treatments.",
+    desc: "We use only the finest Italian marble, granite, Dholpur stones, and imported chemical treatments.",
   },
   {
     title: "Timely Delivery",
@@ -53,7 +53,10 @@ export default function CompanyProfilePage() {
           </span>
           <h1 className="text-4xl sm:text-6xl font-light tracking-tight uppercase leading-tight max-w-4xl">
             A Legacy of Craftsmanship in <br />
-            <span className="font-extrabold text-transparent webkit-text-stroke">
+            <span
+              className="font-extrabold text-transparent webkit-text-stroke
+             -webkit-text-stroke-width: 5px -webkit-text-stroke-color: white"
+            >
               Marble, Stone & Tiles
             </span>
           </h1>

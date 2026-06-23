@@ -79,16 +79,16 @@ export default function Footer() {
         <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-slate-500 tracking-widest uppercase font-semibold">
           <p>© A&B Construction · System Registry Closed</p>
           <div className="flex gap-6">
-            <a
+            {/* <a
               href="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-brand-blue transition-colors"
             >
               Facebook
-            </a>
+            </a> */}
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/abconstruction1977"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-brand-blue transition-colors"

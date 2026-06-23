@@ -244,7 +244,7 @@ export default function ProjectsPage() {
           </div>
           <div className="bg-white border border-slate-200 p-4 shadow-sm">
             <Image
-              src="https://a-bconstruction.in/wp-content/uploads/2025/02/A-B-Project-Tabel.png"
+              src="https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/public/People/gemini-code-1782030460608.png"
               alt="Full data registry list of accomplished surface operations across India by A&B Construction"
               width={1000}
               height={700}
