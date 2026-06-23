@@ -24,10 +24,10 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-40 transition-all duration-500 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-stone-900/95 backdrop-blur-md border-b border-white/5 py-4 shadow-xl"
-          : "bg-transparent py-7"
+          ? "bg-stone-900/95 backdrop-blur-md border-b border-white/5 py-4 shadow-xl text-white"
+          : "bg-white/90 backdrop-blur-sm md:bg-transparent py-6 text-slate-900 md:text-white"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-12 flex items-center justify-between">
@@ -38,18 +38,22 @@ export default function Navbar() {
             alt="A&B Construction Logo"
             width={40}
             height={32}
-            className="object-contain"
+            className="object-contain filter brightness-100 group-hover:scale-105 transition-transform duration-300"
             unoptimized
           />
-          <span className="font-display font-extrabold text-sm tracking-[0.3em] text-white uppercase">
+          <span
+            className={`font-display font-extrabold text-sm tracking-[0.3em] uppercase transition-colors ${
+              isScrolled ? "text-white" : "text-dark-blue md:text-white"
+            }`}
+          >
             A&amp;B{" "}
-            <span className="text-amber-500 font-light tracking-[0.15em] transition-colors group-hover:text-amber-400">
+            <span className="text-amber-500 font-light tracking-[0.15em] group-hover:text-amber-400">
               CONSTRUCTION
             </span>
           </span>
         </Link>
 
-        {/* Desktop Nav */}
+        {/* Desktop Nav Matrix */}
         <nav className="hidden md:flex items-center space-x-12">
           {navigationMap.map((node) => {
             const isTargetActive = currentPath === node.path;
@@ -57,8 +61,14 @@ export default function Navbar() {
               <Link
                 key={node.path}
                 href={node.path}
-                className={`text-[11px] tracking-[0.2em] font-medium uppercase transition-colors hover:text-white ${
-                  isTargetActive ? "text-amber-400 font-bold" : "text-stone-400"
+                className={`text-[11px] tracking-[0.2em] font-semibold uppercase transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:scale-x-0 after:bg-amber-400 after:transition-transform hover:after:scale-x-100 ${
+                  isScrolled
+                    ? isTargetActive
+                      ? "text-amber-400 font-bold"
+                      : "text-stone-300 hover:text-white"
+                    : isTargetActive
+                      ? "text-amber-500 font-bold"
+                      : "text-slate-700 md:text-stone-200 hover:text-dark-blue md:hover:text-white"
                 }`}
               >
                 {node.label}
@@ -67,19 +77,24 @@ export default function Navbar() {
           })}
         </nav>
 
+        {/* Action Button Trigger */}
         <div className="hidden md:block">
           <Link
             href="/contact"
-            className="text-[10px] tracking-[0.2em] font-bold uppercase px-6 py-2.5 bg-amber-500 text-stone-950 hover:bg-amber-400 transition-colors"
+            className="text-[10px] tracking-[0.2em] font-bold uppercase px-6 py-2.5 bg-amber-500 text-stone-950 hover:bg-stone-900 hover:text-white transition-all shadow-md duration-300"
           >
             Contact Us
           </Link>
         </div>
 
-        {/* Mobile Toggle */}
+        {/* Mobile Hamburg Trigger Toggle */}
         <button
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-          className="md:hidden text-stone-400 hover:text-white p-2 transition-colors z-50 relative"
+          className={`md:hidden p-2 transition-colors z-50 relative ${
+            isScrolled
+              ? "text-stone-300 hover:text-white"
+              : "text-slate-800 hover:text-black"
+          }`}
           aria-label="Toggle Navigation"
           aria-expanded={isDrawerOpen}
         >
@@ -103,9 +118,9 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Drawer Overlay */}
       <div
-        className={`fixed inset-y-0 right-0 w-full max-w-sm bg-stone-950 p-12 z-40 shadow-2xl transition-transform duration-500 border-l border-white/5 flex flex-col justify-between ${
+        className={`fixed inset-y-0 right-0 w-full max-w-sm bg-stone-950 p-12 z-40 shadow-2xl transition-transform duration-500 border-l border-white/5 flex flex-col justify-between text-white ${
           isDrawerOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -134,7 +149,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             onClick={() => setIsDrawerOpen(false)}
-            className="w-full block text-center text-xs tracking-[0.2em] font-bold bg-amber-500 text-stone-950 uppercase py-4 transition-colors hover:bg-amber-400"
+            className="w-full block text-center text-xs tracking-[0.2em] font-bold bg-amber-500 text-stone-950 uppercase py-4 transition-colors hover:bg-amber-400 shadow-lg"
           >
             Contact Us
           </Link>
