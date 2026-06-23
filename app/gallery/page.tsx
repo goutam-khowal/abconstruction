@@ -1291,7 +1291,8 @@ export default function GalleryPage() {
           </span>
           <h1 className="text-4xl sm:text-6xl font-light tracking-tight text-white uppercase leading-none">
             Exquisite Surface <br />
-            <span className="font-black text-transparent block mt-2 text-3xl sm:text-5xl md:text-6xl tracking-wider uppercase [-webkit-text-stroke-width:1.5px] [-webkit-text-stroke-color:#ffffff]">
+            <span className="font-extrabold text-transparent webkit-text-stroke
+             -webkit-text-stroke-width: 5px -webkit-text-stroke-color: white">
               Installations.
             </span>
           </h1>
