@@ -187,14 +187,6 @@ export default function Footer() {
           {/* Simple Text Links Only */}
           <div className="flex gap-6">
             <a
-              href="https://wa.me/919818141722?text=Hello%20A%26B%20Construction%2C%20I%20would%20like%20to%20inquire%20about%20a%20project."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-brand-blue transition-colors"
-            >
-              WhatsApp
-            </a>
-            <a
               href="mailto:contact@abconstructions.co.in"
               className="hover:text-brand-blue transition-colors"
             >
