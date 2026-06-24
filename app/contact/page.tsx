@@ -967,7 +967,7 @@ export default function ContactPage() {
             src="https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/public/People/Layout%20images/WhatsApp%20Image%202026-06-24%20at%2012.28.59%20PM.jpeg"
             alt="Corporate procurement baseline asset layout"
             fill
-            className="object-cover object-left"
+            className="object-cover object-left object-top"
             priority
           />
         </div>
