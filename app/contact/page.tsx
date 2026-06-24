@@ -464,7 +464,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-darker-blue via-dark-blue/80 to-transparent z-10" />
         <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-15">
           <Image
-            src="https://a-bconstruction.in/wp-content/uploads/2025/02/freepik__upload__40404.png"
+            src="https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/public/People/Layout%20images/WhatsApp%20Image%202026-06-24%20at%2012.28.59%20PM.jpeg"
             alt="Corporate procurement baseline asset layout"
             fill
             className="object-cover object-left"
