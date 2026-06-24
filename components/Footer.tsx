@@ -77,7 +77,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-slate-500 tracking-widest uppercase font-semibold">
-          <p>© A&B Construction · System Registry Closed</p>
+          <p>© A&B Construction</p>
           <div className="flex gap-6">
             {/* <a
               href="https://facebook.com"
