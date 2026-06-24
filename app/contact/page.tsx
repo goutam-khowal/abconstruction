@@ -783,16 +783,7 @@ export default function ContactPage() {
                 Instant Escalation Nodes
               </span>
               <div className="flex items-center gap-4">
-                {/* WhatsApp Chat Node */}
-                <a
-                  href="https://wa.me/919818141722?text=Hello%20A%26B%20Construction%2C%20I%20would%20like%20to%20inquire%20about%20a%20project."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 flex items-center justify-center p-3 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                  title="Connect via WhatsApp"
-                >
-                  <WhatsAppIcon className="w-5 h-5 object-contain" />
-                </a>
+              
 
                 {/* Email Direct Node */}
                 <a
