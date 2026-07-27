@@ -169,7 +169,7 @@ import { usePathname } from "next/navigation";
 const navigationMap = [
   { label: "Company Profile", path: "/about" },
   { label: "Projects", path: "/projects" },
-  { label: "Gallery", path: "/gallery" },
+  { label: "services", path: "/services" },
 ];
 
 export default function Navbar() {

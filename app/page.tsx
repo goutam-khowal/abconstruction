@@ -1,10 +1,12 @@
+import PartnerMarquee from "@/components/PartnerMarquee";
 import Image from "next/image";
 import Link from "next/link";
 
 const stats = [
-  { value: "40+", label: "Years In Business" },
-  { value: "1k+", label: "Happy Clients" },
-  { value: "1k+", label: "Projects Completed" },
+  { value: "45+", label: "Years In Business" },
+  { value: "5k+", label: "Happy Clients" },
+  { value: "10M+", label: "Sq. Ft. Marble & Stone Work" },
+  { value: "2k+", label: "Completed Projects" },
 ];
 
 const projectCategories = [
@@ -72,15 +74,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 2: METRIC DATA ROW */}
+      {/* SECTION 2: METRIC DATA ROW (4 STATS) */}
       <section className="bg-brand-blue py-10 text-white">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12 grid grid-cols-3 gap-6 text-center">
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {stats.map((stat) => (
             <div key={stat.label} className="space-y-1">
               <p className="text-3xl sm:text-4xl font-extrabold tracking-tight">
                 {stat.value}
               </p>
-              <p className="text-[9px] tracking-widest font-bold uppercase text-blue-100">
+              <p className="text-[9px] sm:text-[10px] tracking-widest font-bold uppercase text-blue-100">
                 {stat.label}
               </p>
             </div>
@@ -112,18 +114,6 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          {/* <div className="lg:col-span-5 relative h-[500px] bg-slate-100 border border-slate-200 p-2 shadow-sm">
-            <div className="relative h-full w-full overflow-hidden">
-              <Image
-                src="https://a-bconstruction.in/wp-content/uploads/2025/02/freepik__upload__13408-682x1024.jpg"
-                alt="High accuracy asset execution protocol alignment"
-                fill
-                sizes="(max-w-7xl) 33vw, 100vw"
-                className="object-cover filter contrast-102"
-                unoptimized
-              />
-            </div>
-          </div> */}
         </div>
       </section>
     </div>

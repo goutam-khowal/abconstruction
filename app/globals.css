@@ -59,3 +59,44 @@ body {
     transform: translateY(0);
   }
 }
+
+/* marquee */
+/* ULTRA HIGH SPEED MARQUEE CAROUSEL */
+@keyframes carousel-fast-ltr {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes carousel-fast-rtl {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-carousel-fast-ltr {
+  display: flex;
+  width: max-content;
+  animation: carousel-fast-ltr 12s linear infinite;
+  /* Ultra Fast Speed! */
+}
+
+.animate-carousel-fast-rtl {
+  display: flex;
+  width: max-content;
+  animation: carousel-fast-rtl 12s linear infinite;
+  /* Ultra Fast Speed! */
+}
+
+/* Mouse Hover Par Ekdum Se Break Laga De Class */
+.pause-on-hover:hover {
+  animation-play-state: paused !important;
+}
