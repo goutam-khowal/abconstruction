@@ -41,3 +41,9 @@ export default function RootLayout({
     </html>
   );
 }
+
+// 5k client
+// 10M+ square feet
+// 2K plus completed projects
+// company marquee animation
+// what we have worked for list with google maps location and images/logos
