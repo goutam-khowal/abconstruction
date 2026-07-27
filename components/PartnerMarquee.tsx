@@ -88,11 +88,30 @@ export default function PartnerMarquee() {
   const topStripData = partners.filter((_, idx) => idx % 2 === 0);
   const bottomStripData = partners.filter((_, idx) => idx % 2 !== 0);
 
-  if (loading || partners.length === 0) return null;
+  // 🧱 SKELETON PLACEHOLDER TO PREVENT JUMPY LAYOUT SHIFT (NO SUDDEN POPPING)
+  if (loading) {
+    return (
+      <section className="bg-slate-950 py-20 border-y border-slate-800 text-white font-sans select-none">
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 mb-12 text-center animate-pulse">
+          <div className="h-3 w-32 bg-slate-800 mx-auto rounded mb-3" />
+          <div className="h-8 w-72 bg-slate-800 mx-auto rounded" />
+        </div>
+        <div className="flex gap-6 overflow-hidden px-6 opacity-30">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="w-48 sm:w-56 h-24 bg-slate-900 border border-slate-800 rounded-xl shrink-0 animate-pulse"
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (partners.length === 0) return null;
 
   return (
     <>
-      {/* 🚀 Production-Safe Keyframe Animations Injection */}
       <style jsx global>{`
         @keyframes marqueeLtr {
           0% {
@@ -113,12 +132,12 @@ export default function PartnerMarquee() {
         .live-marquee-ltr {
           display: flex;
           width: max-content;
-          animation: marqueeLtr 25s linear infinite;
+          animation: marqueeLtr 28s linear infinite;
         }
         .live-marquee-rtl {
           display: flex;
           width: max-content;
-          animation: marqueeRtl 25s linear infinite;
+          animation: marqueeRtl 28s linear infinite;
         }
         .live-marquee-ltr:hover,
         .live-marquee-rtl:hover {
@@ -126,7 +145,7 @@ export default function PartnerMarquee() {
         }
       `}</style>
 
-      <section className="bg-slate-950 py-20 overflow-hidden border-y border-slate-800 text-white font-sans select-none">
+      <section className="bg-slate-950 py-20 overflow-hidden border-y border-slate-800 text-white font-sans select-none transition-opacity duration-700 ease-in opacity-100">
         <div className="max-w-7xl mx-auto px-6 sm:px-12 mb-12 text-center">
           <span className="text-brand-blue text-[10px] sm:text-xs tracking-[0.3em] font-black uppercase block mb-2">
             CLIENT PORTFOLIO
@@ -233,7 +252,6 @@ function LogoMarqueeCard({
             unoptimized
           />
         ) : (
-          /* 🔤 BRIGHT FALLBACK TEXT WHEN IMAGE IS MISSING */
           <div className="flex flex-col items-center justify-center text-center px-2">
             <span className="text-[11px] font-black tracking-wider text-slate-100 group-hover:text-brand-blue uppercase line-clamp-2 leading-tight transition-colors duration-300">
               {name}
