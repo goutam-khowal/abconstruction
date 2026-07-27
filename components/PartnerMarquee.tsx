@@ -29,20 +29,16 @@ export default function PartnerMarquee() {
         if (dbError) throw dbError;
 
         if (dbPartners) {
-          // 2. Exact Gallery Page Folder Query Mechanism
           const mappedPartners = await Promise.all(
             dbPartners.map(async (partner: any) => {
-              // Exact folder name resolution matching company title
               const folderName = partner.company_name.toUpperCase().trim();
 
-              // List files inside the specific company folder (Same as Gallery mechanism)
               const { data: files, error: storageError } =
                 await supabase.storage
                   .from(bucketName)
                   .list(folderName, { limit: 10 });
 
               if (storageError || !files || files.length === 0) {
-                // Return partner with null logo_url if folder/file doesn't exist yet
                 return {
                   id: partner.id,
                   company_name: partner.company_name,
@@ -50,7 +46,6 @@ export default function PartnerMarquee() {
                 };
               }
 
-              // Filter out placeholder files
               const validFiles = files.filter(
                 (f) => f.name !== ".emptyFolderPlaceholder",
               );
@@ -63,7 +58,6 @@ export default function PartnerMarquee() {
                 };
               }
 
-              // Get public CDN URL for the logo inside the company folder
               const logoFile = validFiles[0];
               const {
                 data: { publicUrl },
@@ -97,44 +91,86 @@ export default function PartnerMarquee() {
   if (loading || partners.length === 0) return null;
 
   return (
-    <section className="bg-slate-950 py-20 overflow-hidden border-y border-slate-800 text-white font-sans select-none">
-      <div className="max-w-7xl mx-auto px-6 sm:px-12 mb-12 text-center">
-        <span className="text-brand-blue text-[10px] sm:text-xs tracking-[0.3em] font-black uppercase block mb-2">
-          Client Portfolio
-        </span>
-        <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
-          Trusted Partners & Clients
-        </h2>
-      </div>
+    <>
+      {/* 🚀 Production-Safe Keyframe Animations Injection */}
+      <style jsx global>{`
+        @keyframes marqueeLtr {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        @keyframes marqueeRtl {
+          0% {
+            transform: translateX(-50%);
+          }
+          100% {
+            transform: translateX(0%);
+          }
+        }
+        .live-marquee-ltr {
+          display: flex;
+          width: max-content;
+          animation: marqueeLtr 25s linear infinite;
+        }
+        .live-marquee-rtl {
+          display: flex;
+          width: max-content;
+          animation: marqueeRtl 25s linear infinite;
+        }
+        .live-marquee-ltr:hover,
+        .live-marquee-rtl:hover {
+          animation-play-state: paused !important;
+        }
+      `}</style>
 
-      <div className="relative w-full space-y-12 overflow-visible before:absolute before:left-0 before:top-0 before:z-20 before:h-full before:w-20 sm:before:w-40 before:bg-gradient-to-r before:from-slate-950 before:to-transparent before:pointer-events-none after:absolute after:right-0 after:top-0 after:z-20 after:h-full after:w-20 sm:after:w-40 after:bg-gradient-to-l after:from-slate-950 after:to-transparent after:pointer-events-none">
-        {/* Strip 1: Left to Right */}
-        <div className="flex w-full overflow-visible py-4">
-          <div className="flex shrink-0 items-center gap-8 min-w-full animate-marquee-ltr pause-on-hover">
-            {[...topStripData, ...topStripData].map((company, index) => (
-              <LogoMarqueeCard
-                key={`top-${index}`}
-                name={company.company_name}
-                logo={company.logo_url}
-              />
-            ))}
-          </div>
+      <section className="bg-slate-950 py-20 overflow-hidden border-y border-slate-800 text-white font-sans select-none">
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 mb-12 text-center">
+          <span className="text-brand-blue text-[10px] sm:text-xs tracking-[0.3em] font-black uppercase block mb-2">
+            CLIENT PORTFOLIO
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
+            TRUSTED PARTNERS &amp; CLIENTS
+          </h2>
         </div>
 
-        {/* Strip 2: Right to Left */}
-        <div className="flex w-full overflow-visible py-4">
-          <div className="flex shrink-0 items-center gap-8 min-w-full animate-marquee-rtl pause-on-hover">
-            {[...bottomStripData, ...bottomStripData].map((company, index) => (
-              <LogoMarqueeCard
-                key={`bottom-${index}`}
-                name={company.company_name}
-                logo={company.logo_url}
-              />
-            ))}
+        <div className="relative w-full space-y-12 overflow-visible before:absolute before:left-0 before:top-0 before:z-20 before:h-full before:w-20 sm:before:w-40 before:bg-gradient-to-r before:from-slate-950 before:to-transparent before:pointer-events-none after:absolute after:right-0 after:top-0 after:z-20 after:h-full after:w-20 sm:after:w-40 after:bg-gradient-to-l after:from-slate-950 after:to-transparent after:pointer-events-none">
+          {/* Strip 1: Left to Right */}
+          <div className="flex w-full overflow-visible py-4">
+            <div className="live-marquee-ltr">
+              {[...topStripData, ...topStripData, ...topStripData].map(
+                (company, index) => (
+                  <div key={`top-${index}`} className="pr-8">
+                    <LogoMarqueeCard
+                      name={company.company_name}
+                      logo={company.logo_url}
+                    />
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+
+          {/* Strip 2: Right to Left */}
+          <div className="flex w-full overflow-visible py-4">
+            <div className="live-marquee-rtl">
+              {[...bottomStripData, ...bottomStripData, ...bottomStripData].map(
+                (company, index) => (
+                  <div key={`bottom-${index}`} className="pr-8">
+                    <LogoMarqueeCard
+                      name={company.company_name}
+                      logo={company.logo_url}
+                    />
+                  </div>
+                ),
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
@@ -149,7 +185,7 @@ function LogoMarqueeCard({
 
   return (
     <div className="relative group flex items-center justify-center shrink-0 overflow-visible cursor-pointer">
-      {/* 🎯 HOVER TOOLTIP POPUP (Shows company name on mouse hover) */}
+      {/* 🎯 HOVER TOOLTIP POPUP */}
       <div className="absolute -top-14 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-y-1 z-50 pointer-events-none whitespace-nowrap">
         <div className="bg-brand-blue text-white font-extrabold text-[11px] uppercase tracking-wider px-3.5 py-1.5 shadow-2xl border border-blue-400 rounded-sm">
           {name}
@@ -157,7 +193,7 @@ function LogoMarqueeCard({
         <div className="w-2.5 h-2.5 bg-brand-blue rotate-45 mx-auto -mt-1.5 border-r border-b border-blue-400" />
       </div>
 
-      {/* 🖼️ CARD CONTAINER */}
+      {/* 🖼️ LOGO / TEXT CARD CONTAINER */}
       <div
         className="
           w-48 sm:w-56 h-24
@@ -197,7 +233,7 @@ function LogoMarqueeCard({
             unoptimized
           />
         ) : (
-          /* 🔤 CLEAN TEXT DISPLAY: High visibility white text when image is missing */
+          /* 🔤 BRIGHT FALLBACK TEXT WHEN IMAGE IS MISSING */
           <div className="flex flex-col items-center justify-center text-center px-2">
             <span className="text-[11px] font-black tracking-wider text-slate-100 group-hover:text-brand-blue uppercase line-clamp-2 leading-tight transition-colors duration-300">
               {name}
