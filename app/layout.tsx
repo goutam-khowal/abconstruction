@@ -15,7 +15,14 @@ export const metadata: Metadata = {
   description:
     "Expert laying and grinding of Italian and granite marble, Kota & Dholpur stones, and high-performance tiles. Founded in 1977. Serving Delhi and across India.",
   icons: {
-    icon: "https://a-bconstruction.in/wp-content/uploads/2025/01/cropped-AB-Con-Logo-1-3-80x64.png",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
