@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import ArchiveProjectsTable from "@/components/ArchiveProjectsTable";
@@ -48,11 +48,56 @@ export default function GalleryPage() {
 
   const [activeMobileCard, setActiveMobileCard] = useState<string | null>(null);
 
+  // Holds the pending 1.5s auto-close timer so we can clear/reset it safely
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearCloseTimeout = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const closeActiveCard = () => {
+    clearCloseTimeout();
+    setActiveMobileCard(null);
+  };
+
+  // Close on any click/tap OUTSIDE the currently active card
   useEffect(() => {
-    const handleOutsideClick = () => setActiveMobileCard(null);
+    const handleOutsideClick = () => closeActiveCard();
     window.addEventListener("click", handleOutsideClick);
     return () => window.removeEventListener("click", handleOutsideClick);
   }, []);
+
+  // Safety cleanup on unmount
+  useEffect(() => {
+    return () => clearCloseTimeout();
+  }, []);
+
+  // Unified handler for both touch tap AND mouse click on a card.
+  // stopPropagation() prevents this same click from also triggering the
+  // window-level "outside click" listener above, which was previously
+  // closing the overlay in the same instant it opened.
+  const handleCardInteraction = (
+    cardId: string,
+    e: React.MouseEvent | React.TouchEvent,
+  ) => {
+    e.stopPropagation();
+    clearCloseTimeout();
+
+    if (activeMobileCard === cardId) {
+      // tapping the same card again closes it immediately
+      setActiveMobileCard(null);
+      return;
+    }
+
+    setActiveMobileCard(cardId);
+    closeTimeoutRef.current = setTimeout(() => {
+      setActiveMobileCard(null);
+      closeTimeoutRef.current = null;
+    }, 1500);
+  };
 
   useEffect(() => {
     async function fetchProjects() {
@@ -311,17 +356,12 @@ export default function GalleryPage() {
                         {images.map((img, iIdx) => {
                           const isFirstImage = iIdx === 0;
                           const cardId = `${pIdx}-${iIdx}`;
-                          const isActiveOnTouch = activeMobileCard === cardId;
+                          const isActive = activeMobileCard === cardId;
 
                           return (
                             <div
                               key={iIdx}
-                              onTouchEnd={(e) => {
-                                e.stopPropagation();
-                                setActiveMobileCard(
-                                  isActiveOnTouch ? null : cardId,
-                                );
-                              }}
+                              onClick={(e) => handleCardInteraction(cardId, e)}
                               className="relative aspect-square overflow-hidden bg-stone-900 border border-stone-200 rounded-sm shadow-sm group cursor-pointer select-none"
                             >
                               <Image
@@ -331,7 +371,7 @@ export default function GalleryPage() {
                                 loading="lazy"
                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                 className={`object-contain transition-all duration-500 ${
-                                  isActiveOnTouch
+                                  isActive
                                     ? "brightness-50 scale-105"
                                     : "brightness-95 group-hover:brightness-50 group-hover:scale-105"
                                 }`}
@@ -340,7 +380,7 @@ export default function GalleryPage() {
 
                               <div
                                 className={`absolute inset-0 bg-stone-950/80 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center transition-all duration-300 z-20 ${
-                                  isActiveOnTouch
+                                  isActive
                                     ? "opacity-100 visible"
                                     : "opacity-0 invisible group-hover:opacity-100 group-hover:visible"
                                 }`}
