@@ -275,7 +275,6 @@ export default function Footer() {
                   { label: "Home Base", path: "/" },
                   { label: "Our Heritage", path: "/about" },
                   { label: "Surface Projects", path: "/projects" },
-                  { label: "Media Gallery", path: "/gallery" },
                   { label: "Contact Us", path: "/contact" },
                 ].map((item) => (
                   <li key={item.path}>
