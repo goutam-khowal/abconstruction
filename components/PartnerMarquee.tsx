@@ -233,7 +233,7 @@ function LogoMarqueeCard({
     >
       {/* FLOATING AMBER HOVER BADGE */}
       <div
-        className={`absolute -top-11 left-1/2 -translate-x-1/2 transition-all duration-300 z-50 pointer-events-none whitespace-nowrap ${
+        className={`absolute -top-11 left-1/2 -translate-x-1/2 transition-all duration-300 z-100 pointer-events-none whitespace-nowrap ${
           isActive
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 translate-y-2 scale-95"
