@@ -94,6 +94,13 @@ body {
   will-change: transform;
 }
 
+.animate-carousel-fast-ltr:hover {
+  animation-play-state: paused;
+}
+.animate-carousel-fast-rtl:hover {
+  animation-play-state: paused;
+}
+
 .animate-carousel-fast-rtl {
   display: flex !important;
   flex-direction: row !important;
