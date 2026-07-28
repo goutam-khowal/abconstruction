@@ -484,7 +484,7 @@ function highlightMatches(text: string, terms: string[]) {
 
 export default function ArchiveProjectsTable() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [selectedCategory, setSelectedCategory] = useState("Government/Embassy");
 
   // Split the query into individual terms so multi-word searches
   // (e.g. "embassy delhi") match across name + location + category
