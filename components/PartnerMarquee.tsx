@@ -15,6 +15,24 @@ export default function PartnerMarquee() {
   const [loading, setLoading] = useState(true);
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
 
+  // Tracks whether a finger is currently held down on a card within each
+  // strip, so that strip's marquee animation can be paused for exactly the
+  // duration of the touch and resumed the instant the finger lifts.
+  const [isTouchPausedTop, setIsTouchPausedTop] = useState(false);
+  const [isTouchPausedBottom, setIsTouchPausedBottom] = useState(false);
+
+  const handleTouchStart = (id: string) => {
+    setActiveCardId(id);
+    if (id.startsWith("top-")) setIsTouchPausedTop(true);
+    else setIsTouchPausedBottom(true);
+  };
+
+  const handleTouchEnd = (id: string) => {
+    setActiveCardId(null);
+    if (id.startsWith("top-")) setIsTouchPausedTop(false);
+    else setIsTouchPausedBottom(false);
+  };
+
   useEffect(() => {
     async function fetchPartners() {
       try {
@@ -126,7 +144,12 @@ export default function PartnerMarquee() {
         <div className="absolute right-0 top-0 z-20 h-full w-20 sm:w-48 bg-gradient-to-l from-stone-950 via-stone-950/80 to-transparent pointer-events-none" />
 
         <div className="flex w-full overflow-hidden py-2">
-          <div className="animate-carousel-fast-ltr hover:[animation-play-state:paused]">
+          <div
+            className="animate-carousel-fast-ltr hover:[animation-play-state:paused]"
+            style={
+              isTouchPausedTop ? { animationPlayState: "paused" } : undefined
+            }
+          >
             {[
               ...topStripData,
               ...topStripData,
@@ -141,7 +164,8 @@ export default function PartnerMarquee() {
                     name={company.company_name}
                     logo={company.logo_url}
                     activeCardId={activeCardId}
-                    setActiveCardId={setActiveCardId}
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
                   />
                 </div>
               );
@@ -150,7 +174,12 @@ export default function PartnerMarquee() {
         </div>
 
         <div className="flex w-full overflow-hidden py-2">
-          <div className="animate-carousel-fast-rtl hover:[animation-play-state:paused]">
+          <div
+            className="animate-carousel-fast-rtl hover:[animation-play-state:paused]"
+            style={
+              isTouchPausedBottom ? { animationPlayState: "paused" } : undefined
+            }
+          >
             {[
               ...bottomStripData,
               ...bottomStripData,
@@ -165,7 +194,8 @@ export default function PartnerMarquee() {
                     name={company.company_name}
                     logo={company.logo_url}
                     activeCardId={activeCardId}
-                    setActiveCardId={setActiveCardId}
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
                   />
                 </div>
               );
@@ -182,21 +212,24 @@ function LogoMarqueeCard({
   name,
   logo,
   activeCardId,
-  setActiveCardId,
+  onTouchStart,
+  onTouchEnd,
 }: {
   id: string;
   name: string;
   logo: string | null;
   activeCardId: string | null;
-  setActiveCardId: React.Dispatch<React.SetStateAction<string | null>>;
+  onTouchStart: (id: string) => void;
+  onTouchEnd: (id: string) => void;
 }) {
   const [hasError, setHasError] = useState(false);
   const isActive = activeCardId === id;
 
   return (
     <div
-      onTouchStart={() => setActiveCardId(id)}
-      onTouchEnd={() => setActiveCardId(null)}
+      onTouchStart={() => onTouchStart(id)}
+      onTouchEnd={() => onTouchEnd(id)}
+      onTouchCancel={() => onTouchEnd(id)}
       className="relative group flex items-center justify-center shrink-0 cursor-pointer"
     >
       <div
