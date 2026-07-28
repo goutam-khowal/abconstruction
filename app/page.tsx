@@ -3,10 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 const stats = [
-  { value: "45+", label: "Years In Business" },
+  { value: "40+", label: "Years In Business" },
   { value: "5k+", label: "Happy Clients" },
   { value: "10M+", label: "Sq. Ft. Marble & Stone Work" },
-  { value: "2k+", label: "Completed Projects" },
+  { value: "1k+", label: "Completed Projects" },
 ];
 
 const projectCategories = [
@@ -64,7 +64,7 @@ export default function HomePage() {
                 Initiate Consultation
               </Link>
               <Link
-                href="/gallery"
+                href="/projects"
                 className="px-8 py-4 border border-white/20 text-white text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
               >
                 View Project Matrix
