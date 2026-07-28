@@ -16,7 +16,7 @@ export default function PartnerMarquee() {
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchPartnersWithGalleryPattern() {
+    async function fetchPartners() {
       try {
         setLoading(true);
         const bucketName = "partner-logos";
@@ -29,60 +29,69 @@ export default function PartnerMarquee() {
         if (dbError) throw dbError;
 
         if (dbPartners) {
-          const mappedPartners = await Promise.all(
+          const pathList: string[] = [];
+          const partnerPathsMap: { id: string | number; fullPath: string }[] =
+            [];
+
+          await Promise.all(
             dbPartners.map(async (partner: any) => {
               const folderName = partner.company_name.toUpperCase().trim();
-
-              const { data: files, error: storageError } =
-                await supabase.storage
-                  .from(bucketName)
-                  .list(folderName, { limit: 10 });
-
-              if (storageError || !files || files.length === 0) {
-                return {
-                  id: partner.id,
-                  company_name: partner.company_name,
-                  logo_url: null,
-                };
-              }
-
-              const validFiles = files.filter(
-                (f) => f.name !== ".emptyFolderPlaceholder",
-              );
-
-              if (validFiles.length === 0) {
-                return {
-                  id: partner.id,
-                  company_name: partner.company_name,
-                  logo_url: null,
-                };
-              }
-
-              const logoFile = validFiles[0];
-              const {
-                data: { publicUrl },
-              } = supabase.storage
+              const { data: files } = await supabase.storage
                 .from(bucketName)
-                .getPublicUrl(`${folderName}/${logoFile.name}`);
+                .list(folderName, { limit: 5 });
 
-              return {
-                id: partner.id,
-                company_name: partner.company_name,
-                logo_url: publicUrl,
-              };
+              if (files && files.length > 0) {
+                const validFiles = files.filter(
+                  (f) =>
+                    f.name !== ".emptyFolderPlaceholder" &&
+                    !f.name.startsWith("."),
+                );
+                if (validFiles.length > 0) {
+                  const fullPath = `${folderName}/${validFiles[0].name}`;
+                  pathList.push(fullPath);
+                  partnerPathsMap.push({ id: partner.id, fullPath });
+                }
+              }
             }),
           );
 
-          setPartners(mappedPartners);
+          // Direct Client-Side Signed URLs Fetching
+          let signedMap: Record<string, string> = {};
+          if (pathList.length > 0) {
+            const { data: signedData } = await supabase.storage
+              .from(bucketName)
+              .createSignedUrls(pathList, 3600);
+
+            if (signedData) {
+              signedData.forEach((item) => {
+                if (item.path && item.signedUrl) {
+                  signedMap[item.path] = item.signedUrl;
+                }
+              });
+            }
+          }
+
+          const finalPartners = dbPartners.map((partner: any) => {
+            const match = partnerPathsMap.find((m) => m.id === partner.id);
+            const logoUrl = match ? signedMap[match.fullPath] || null : null;
+
+            return {
+              id: partner.id,
+              company_name: partner.company_name,
+              logo_url: logoUrl,
+            };
+          });
+
+          setPartners(finalPartners);
         }
       } catch (err) {
-        console.error("Critical partner logo gallery pattern error:", err);
+        console.error("Partner logos fetch error:", err);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchPartnersWithGalleryPattern();
+    fetchPartners();
   }, []);
 
   const topStripData = partners.filter((_, idx) => idx % 2 === 0);
@@ -90,18 +99,10 @@ export default function PartnerMarquee() {
 
   if (loading) {
     return (
-      <section className="bg-slate-950 py-20 border-y border-slate-800 text-white font-sans select-none">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12 mb-12 text-center animate-pulse">
-          <div className="h-3 w-32 bg-slate-800 mx-auto rounded mb-3" />
-          <div className="h-8 w-72 bg-slate-800 mx-auto rounded" />
-        </div>
-        <div className="flex gap-6 overflow-hidden px-6 opacity-30">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="w-48 sm:w-56 h-24 bg-white border border-slate-200 rounded-xl shrink-0 animate-pulse"
-            />
-          ))}
+      <section className="bg-stone-900 py-16 border-y border-stone-800 text-white font-sans">
+        <div className="max-w-7xl mx-auto px-4 text-center animate-pulse mb-6">
+          <div className="h-3 w-32 bg-stone-800 mx-auto rounded mb-2" />
+          <div className="h-6 w-64 bg-stone-800 mx-auto rounded" />
         </div>
       </section>
     );
@@ -110,121 +111,69 @@ export default function PartnerMarquee() {
   if (partners.length === 0) return null;
 
   return (
-    <>
-      <style jsx global>{`
-        @keyframes marqueeLtr {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        @keyframes marqueeRtl {
-          0% {
-            transform: translateX(-50%);
-          }
-          100% {
-            transform: translateX(0%);
-          }
-        }
-        .live-marquee-ltr {
-          display: flex;
-          width: max-content;
-          animation: marqueeLtr 70s linear infinite;
-        }
-        .live-marquee-rtl {
-          display: flex;
-          width: max-content;
-          animation: marqueeRtl 70s linear infinite;
-        }
+    <section className="bg-stone-950 py-16 sm:py-24 overflow-hidden border-y border-stone-800/80 text-white font-sans select-none relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center mb-10 sm:mb-14">
+        <span className="text-amber-500 text-xs tracking-[0.25em] font-extrabold uppercase block mb-2">
+          Institutional Portfolio
+        </span>
+        <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
+          Trusted Partners &amp; Clients
+        </h2>
+      </div>
 
-        /* Desktop hover-only pause */
-        @media (hover: hover) and (pointer: fine) {
-          .live-marquee-ltr:hover,
-          .live-marquee-rtl:hover {
-            animation-play-state: paused !important;
-          }
-        }
+      <div className="relative w-full space-y-6 sm:space-y-8 overflow-hidden">
+        <div className="absolute left-0 top-0 z-20 h-full w-20 sm:w-48 bg-gradient-to-r from-stone-950 via-stone-950/80 to-transparent pointer-events-none" />
+        <div className="absolute right-0 top-0 z-20 h-full w-20 sm:w-48 bg-gradient-to-l from-stone-950 via-stone-950/80 to-transparent pointer-events-none" />
 
-        /* Mobile touch pause state */
-        .marquee-paused {
-          animation-play-state: paused !important;
-        }
-
-        /* PREVENT MOBILE LONG-PRESS CALLOUT POPUP */
-        .no-touch-callout {
-          -webkit-touch-callout: none !important;
-          -webkit-user-select: none !important;
-          user-select: none !important;
-        }
-      `}</style>
-
-      <section className="bg-slate-950 py-20 overflow-hidden border-y border-slate-800 text-white font-sans select-none no-touch-callout">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12 mb-12 text-center">
-          <span className="text-brand-blue text-[10px] sm:text-xs tracking-[0.3em] font-black uppercase block mb-2">
-            CLIENT PORTFOLIO
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
-            TRUSTED PARTNERS &amp; CLIENTS
-          </h2>
-        </div>
-
-        <div className="relative w-full space-y-12 overflow-visible before:absolute before:left-0 before:top-0 before:z-20 before:h-full before:w-20 sm:before:w-40 before:bg-gradient-to-r before:from-slate-950 before:to-transparent before:pointer-events-none after:absolute after:right-0 after:top-0 after:z-20 after:h-full after:w-20 sm:after:w-40 after:bg-gradient-to-l after:from-slate-950 after:to-transparent after:pointer-events-none">
-          {/* Strip 1: Left to Right */}
-          <div className="flex w-full overflow-visible py-4">
-            <div
-              className={`live-marquee-ltr ${
-                activeCardId?.startsWith("top-") ? "marquee-paused" : ""
-              }`}
-            >
-              {[...topStripData, ...topStripData, ...topStripData].map(
-                (company, index) => {
-                  const cardId = `top-${index}`;
-                  return (
-                    <div key={cardId} className="pr-8">
-                      <LogoMarqueeCard
-                        id={cardId}
-                        name={company.company_name}
-                        logo={company.logo_url}
-                        activeCardId={activeCardId}
-                        setActiveCardId={setActiveCardId}
-                      />
-                    </div>
-                  );
-                },
-              )}
-            </div>
-          </div>
-
-          {/* Strip 2: Right to Left */}
-          <div className="flex w-full overflow-visible py-4">
-            <div
-              className={`live-marquee-rtl ${
-                activeCardId?.startsWith("bottom-") ? "marquee-paused" : ""
-              }`}
-            >
-              {[...bottomStripData, ...bottomStripData, ...bottomStripData].map(
-                (company, index) => {
-                  const cardId = `bottom-${index}`;
-                  return (
-                    <div key={cardId} className="pr-8">
-                      <LogoMarqueeCard
-                        id={cardId}
-                        name={company.company_name}
-                        logo={company.logo_url}
-                        activeCardId={activeCardId}
-                        setActiveCardId={setActiveCardId}
-                      />
-                    </div>
-                  );
-                },
-              )}
-            </div>
+        <div className="flex w-full overflow-hidden py-2">
+          <div className="animate-carousel-fast-ltr hover:[animation-play-state:paused]">
+            {[
+              ...topStripData,
+              ...topStripData,
+              ...topStripData,
+              ...topStripData,
+            ].map((company, index) => {
+              const cardId = `top-${index}`;
+              return (
+                <div key={cardId} className="px-3 sm:px-4 shrink-0">
+                  <LogoMarqueeCard
+                    id={cardId}
+                    name={company.company_name}
+                    logo={company.logo_url}
+                    activeCardId={activeCardId}
+                    setActiveCardId={setActiveCardId}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
-      </section>
-    </>
+
+        <div className="flex w-full overflow-hidden py-2">
+          <div className="animate-carousel-fast-rtl hover:[animation-play-state:paused]">
+            {[
+              ...bottomStripData,
+              ...bottomStripData,
+              ...bottomStripData,
+              ...bottomStripData,
+            ].map((company, index) => {
+              const cardId = `bottom-${index}`;
+              return (
+                <div key={cardId} className="px-3 sm:px-4 shrink-0">
+                  <LogoMarqueeCard
+                    id={cardId}
+                    name={company.company_name}
+                    logo={company.logo_url}
+                    activeCardId={activeCardId}
+                    setActiveCardId={setActiveCardId}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -244,53 +193,30 @@ function LogoMarqueeCard({
   const [hasError, setHasError] = useState(false);
   const isActive = activeCardId === id;
 
-  const handleTouchStart = () => {
-    setActiveCardId(id);
-  };
-
-  const handleTouchEnd = () => {
-    setActiveCardId(null);
-  };
-
   return (
     <div
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
-      onContextMenu={(e) => e.preventDefault()}
-      className="relative group flex items-center justify-center shrink-0 overflow-visible cursor-pointer select-none touch-manipulation no-touch-callout"
+      onTouchStart={() => setActiveCardId(id)}
+      onTouchEnd={() => setActiveCardId(null)}
+      className="relative group flex items-center justify-center shrink-0 cursor-pointer"
     >
-      {/* 🎯 TOOLTIP POPUP */}
       <div
-        className={`absolute -top-14 left-1/2 -translate-x-1/2 transition-all duration-300 transform z-50 pointer-events-none whitespace-nowrap ${
+        className={`absolute -top-10 left-1/2 -translate-x-1/2 transition-all duration-300 z-50 pointer-events-none whitespace-nowrap ${
           isActive
             ? "opacity-100 -translate-y-1"
             : "opacity-0 group-hover:opacity-100 group-hover:-translate-y-1"
         }`}
       >
-        <div className="bg-brand-blue text-white font-extrabold text-[11px] uppercase tracking-wider px-3.5 py-1.5 shadow-xl border border-blue-400/80 rounded-sm">
+        <div className="bg-amber-600 text-white font-extrabold text-[10px] uppercase tracking-wider px-3 py-1 shadow-xl rounded-sm border border-amber-400/50">
           {name}
         </div>
-        <div className="w-2.5 h-2.5 bg-brand-blue rotate-45 mx-auto -mt-1.5 border-r border-b border-blue-400/80" />
       </div>
 
-      {/* 🖼️ CARD CONTAINER (WHITE BG + DARK SHADOW DEFAULT STATE) */}
       <div
         className={`
-          relative
-          w-48 sm:w-56 h-24
-          px-6 py-4
-          flex items-center justify-center
-          rounded-xl
-          bg-white
-          border border-slate-200
-          shadow-[0_8px_20px_rgba(0,0,0,0.35)]
-          transition-all duration-300
-          overflow-hidden
-          ${
+          relative w-44 sm:w-56 h-22 sm:h-24 px-5 py-3 flex items-center justify-center rounded-md bg-stone-900/90 border border-stone-800 shadow-md transition-all duration-300 backdrop-blur-sm ${
             isActive
-              ? "-translate-y-1.5 shadow-[0_16px_30px_rgba(0,0,0,0.5)] border-brand-blue/50"
-              : "group-hover:-translate-y-1.5 group-hover:shadow-[0_16px_30px_rgba(0,0,0,0.5)] group-hover:border-brand-blue/50"
+              ? "-translate-y-1 border-amber-500/80 bg-stone-800 shadow-amber-500/10 shadow-lg"
+              : "group-hover:-translate-y-1 group-hover:border-amber-500/80 group-hover:bg-stone-800 group-hover:shadow-amber-500/10 group-hover:shadow-lg"
           }
         `}
       >
@@ -298,40 +224,17 @@ function LogoMarqueeCard({
           <Image
             src={logo}
             alt={name}
-            width={160}
-            height={60}
-            draggable={false}
+            width={140}
+            height={50}
+            loading="lazy"
             onError={() => setHasError(true)}
-            /* 🌟 HOVER STATE: Logo turns colorful AND scales up cleanly (scale-110) */
-            className={`
-              relative z-10
-              max-h-12
-              w-auto
-              object-contain
-              transition-all
-              duration-300
-              pointer-events-none
-              select-none
-              ${
-                isActive
-                  ? "grayscale-0 opacity-100 scale-110"
-                  : "grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
-              }
-            `}
+            className="max-h-10 sm:max-h-12 w-auto object-contain filter brightness-90 contrast-125 opacity-75 group-hover:opacity-100 group-hover:brightness-100 group-hover:scale-105 transition-all duration-300"
             unoptimized
           />
         ) : (
-          <div className="relative z-10 flex flex-col items-center justify-center text-center px-2 pointer-events-none select-none">
-            <span
-              className={`text-[11px] font-black tracking-wider uppercase line-clamp-2 leading-tight transition-all duration-300 ${
-                isActive
-                  ? "text-brand-blue scale-105"
-                  : "text-slate-900 group-hover:text-brand-blue group-hover:scale-105"
-              }`}
-            >
-              {name}
-            </span>
-          </div>
+          <span className="text-xs font-extrabold tracking-wider uppercase text-stone-200 text-center line-clamp-2 group-hover:text-amber-400 transition-colors">
+            {name}
+          </span>
         )}
       </div>
     </div>

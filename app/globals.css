@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  /* Ultra-Professional Premium Blue & Clean Ivory Palette */
-  --background: #ffffff;
-  /* Clean White Base */
-  --foreground: #0f172a;
-  /* Deep Slate-900 Core Text */
+  /* Warm Architectural Stone & Fine Gold Palette */
+  --background: #fafaf9;
+  /* Stone-50 warm alabaster background */
+  --foreground: #1c1917;
+  /* Stone-900 charcoal primary typography */
 
-  --bg-dark: #0f172a;
-  /* Premium Deep Slate Blue for sections */
-  --bg-darker: #020617;
-  /* Luxury Dark Indigo Black for deep backdrops */
-  --primary-blue: #2563eb;
-  /* Royal Blue - Trust & Professionalism */
-  --primary-hover: #1d4ed8;
-  /* Deep Sapphire Blue */
-  --accent-ice: #f8fafc;
-  /* Clean Soft Gallery Background */
+  --bg-dark: #1c1917;
+  /* Deep charcoal for rich contrast sections */
+  --bg-darker: #0c0a09;
+  /* Obsidian black for deep footers/backdrops */
+  --primary-gold: #d97706;
+  /* Brushed amber gold accent */
+  --primary-hover: #b45309;
+  /* Deep warm amber hover state */
+  --accent-ice: #f5f5f4;
+  /* Stone-100 neutral section fill */
 
-  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
 }
 
 @theme {
@@ -26,7 +26,7 @@
   --color-foreground: var(--foreground);
   --color-dark-blue: var(--bg-dark);
   --color-darker-blue: var(--bg-darker);
-  --color-brand-blue: var(--primary-blue);
+  --color-brand-blue: var(--primary-gold);
   --color-brand-hover: var(--primary-hover);
   --color-ice: var(--accent-ice);
 
@@ -36,16 +36,21 @@
 
 @layer utilities {
   .webkit-text-stroke {
-    -webkit-text-stroke: 1px rgba(37, 99, 235, 0.25);
+    -webkit-text-stroke: 1px rgba(217, 119, 6, 0.3);
   }
 }
 
+html,
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  touch-action: manipulation;
+  font-size: 16px;
+  /* Strict minimum base size for responsive scaling */
 }
 
 @keyframes fade-in {
@@ -60,8 +65,7 @@ body {
   }
 }
 
-/* marquee */
-/* ULTRA HIGH SPEED MARQUEE CAROUSEL */
+/* ULTRA SMOOTH HORIZONTAL MARQUEE CAROUSEL */
 @keyframes carousel-fast-ltr {
   0% {
     transform: translateX(0%);
@@ -83,84 +87,47 @@ body {
 }
 
 .animate-carousel-fast-ltr {
-  display: flex;
-  width: max-content;
-  animation: carousel-fast-ltr 60s linear infinite;
-  /* Ultra Fast Speed! */
+  display: flex !important;
+  flex-direction: row !important;
+  width: max-content !important;
+  animation: carousel-fast-ltr 45s linear infinite;
+  will-change: transform;
 }
 
 .animate-carousel-fast-rtl {
-  display: flex;
-  width: max-content;
-  animation: carousel-fast-rtl 60s linear infinite;
-  /* Ultra Fast Speed! */
+  display: flex !important;
+  flex-direction: row !important;
+  width: max-content !important;
+  animation: carousel-fast-rtl 45s linear infinite;
+  will-change: transform;
 }
 
-/* Mouse Hover Par Ekdum Se Break Laga De Class */
-.pause-on-hover:hover {
-  animation-play-state: paused !important;
-}
-
-/* SCROLLBAR */
-/* 🎨 CUSTOM GLOBAL SCROLLBAR */
-
-/* 1. Firefox Support */
+/* CUSTOM ACCESSIBLE SCROLLBAR */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2563eb #020617;
-  /* thumb color | track color */
+  scrollbar-color: #d97706 #1c1917;
 }
 
-/* 2. WebKit Browsers (Chrome, Edge, Safari, Brave, Opera) */
 ::-webkit-scrollbar {
-  width: 10px;
-  /* Vertical scrollbar width */
-  height: 10px;
-  /* Horizontal scrollbar height */
+  width: 8px;
+  height: 8px;
 }
 
-/* Track (Background) */
 ::-webkit-scrollbar-track {
-  background: #020617;
-  /* Match your bg-slate-950 theme */
+  background: #1c1917;
 }
 
-/* Handle (Thumb) */
 ::-webkit-scrollbar-thumb {
-  background: #1e3a8a;
-  /* Dark Blue */
+  background: #78350f;
   border-radius: 9999px;
-  /* Rounded pill shape */
-  border: 2px solid #020617;
-  /* Creates padding effect inside track */
+  border: 2px solid #1c1917;
   transition: background 0.3s ease;
 }
 
-/* Handle on Hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
-  /* Glowing Brand Blue on hover */
+  background: #d97706;
 }
 
-/* Handle when clicked / active */
-::-webkit-scrollbar-thumb:active {
-  background: #3b82f6;
-  /* Lighter blue highlight */
-}
-
-/* Corner junction when both vertical + horizontal scrollbars exist */
-::-webkit-scrollbar-corner {
-  background: #020617;
-}
-
-/* -------------------------------------------------- */
-
-.webkit-text-stroke {
-  -webkit-text-stroke-width: 1.5px;
-  -webkit-text-stroke-color: #ffffff;
-}
-
-/* Hide scrollbars for clean UI utility class */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

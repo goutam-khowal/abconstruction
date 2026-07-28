@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jakartaFont.variable} scroll-smooth`}>
-      <body className="antialiased bg-white text-slate-900 font-sans selection:bg-brand-blue selection:text-white">
+      <body className="antialiased bg-stone-50 text-stone-900 font-sans selection:bg-amber-600 selection:text-white">
         <Navbar />
         <main id="main-content-stream">{children}</main>
         <Footer />
@@ -42,9 +42,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-// 5k client
-// 10M+ square feet
-// 2K plus completed projects
-// company marquee animation
-// what we have worked for list with google maps location and images/logos

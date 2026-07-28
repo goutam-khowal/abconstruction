@@ -1,86 +1,67 @@
-import Image from "next/image";
 import Link from "next/link";
-import PartnerMarquee from "@/components/PartnerMarquee";
 
 export const metadata = {
-  title: "Projects – A&B Construction",
+  title: "Services – A&B Construction",
   description:
-    "Bringing Visions to Life! Explore our completed projects — craftsmanship meets perfection.",
+    "Expert laying, diamond grinding, and specialized tile installation services across India.",
 };
 
-const projectCategories = [
+const serviceItems = [
   {
-    label: "Commercial Projects",
-    image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/1-1024x1024.png",
-    desc: "Office buildings, retail spaces, hotels, and corporate interiors with premium marble and stone finishes.",
+    title: "Italian Marble Installation & Diamond Grinding",
+    desc: "Precision laying, chemical epoxy treatment, seamless joint alignment, and multi-stage mirror diamond polishing for high-end luxury imported slabs.",
   },
   {
-    label: "Healthcare Projects",
-    image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/2-1024x1024.png",
-    desc: "Hospitals and medical facilities requiring hygienic, durable, and aesthetically refined surfaces.",
+    title: "Granite & Structural Stone Execution",
+    desc: "Heavy-duty outdoor and indoor structural stone fitting, Kota step linings, and Dholpur facade claddings engineered for long-term commercial wear.",
   },
   {
-    label: "Residential Projects",
-    image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/3-1024x1024.png",
-    desc: "Luxury homes, apartments, and villas — transforming living spaces with timeless marble and tile.",
-  },
-  {
-    label: "Public Projects",
-    image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/4-1024x1024.png",
-    desc: "Government buildings, airports, monuments, and public institutions demanding lasting craftsmanship.",
+    title: "High-Performance Tile & Facade Cladding",
+    desc: "Large-format porcelain, vitrified ceramic layers, and ventilated exterior wall cladding installed with precision laser levelling.",
   },
 ];
 
-export default function ProjectsPage() {
+export default function ServicesPage() {
   return (
-    <div className="bg-white text-slate-900 font-sans">
-      {/* Hero Header */}
-      <section className="relative min-h-[50vh] flex items-center bg-dark-blue text-white pt-32 pb-20">
-        <div className="absolute inset-0 bg-gradient-to-r from-darker-blue via-dark-blue/80 to-transparent z-10" />
-        <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-12 w-full">
-          <span className="text-brand-blue text-[10px] tracking-[0.4em] uppercase font-black block mb-3">
-            Portfolio Registry
+    <div className="bg-stone-50 text-stone-900 font-sans">
+      <section className="relative min-h-[40vh] sm:min-h-[45vh] flex items-center bg-stone-900 text-white pt-28 sm:pt-32 pb-12 sm:pb-16">
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/80 to-transparent z-10" />
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full">
+          <span className="text-amber-500 text-xs tracking-widest uppercase font-extrabold block mb-2">
+            Technical Capabilities
           </span>
-          <h1 className="text-4xl sm:text-6xl font-light tracking-tight text-white uppercase leading-none">
-            Where Craftsmanship <br />
-            <span className="font-extrabold text-transparent webkit-text-stroke">
-              Meets Perfection.
+          <h1 className="text-3xl sm:text-5xl font-light tracking-tight text-white uppercase leading-tight">
+            Comprehensive <br />
+            <span className="font-extrabold text-amber-500">
+              Surface Services.
             </span>
           </h1>
         </div>
       </section>
 
-      {/* Domain Cards Presentation Layer */}
-      <section className="py-24 max-w-7xl mx-auto px-6 sm:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {projectCategories.map((cat, idx) => (
+      <section className="py-12 sm:py-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {serviceItems.map((s) => (
             <div
-              key={cat.label}
-              className="border border-slate-200 bg-ice flex flex-col justify-between group hover:border-brand-blue/20 transition-all"
+              key={s.title}
+              className="border border-stone-200 bg-white p-6 sm:p-8 flex flex-col justify-between hover:border-amber-500/50 transition-colors rounded-sm shadow-sm"
             >
-              <div className="relative h-72 overflow-hidden bg-slate-100 border-b border-slate-200">
-                <Image
-                  src={cat.image}
-                  alt={cat.label}
-                  fill
-                  priority={idx < 2}
-                  sizes="(max-w-7xl) 50vw, 100vw"
-                  className="object-cover filter brightness-95 group-hover:scale-101 transition-transform duration-700"
-                  unoptimized
-                />
-              </div>
-              <div className="p-8 bg-white space-y-3">
-                <span className="h-0.5 w-6 bg-brand-blue block" />
-                <h3 className="text-dark-blue font-bold text-xl uppercase tracking-tight">
-                  {cat.label}
+              <div className="space-y-3">
+                <span className="h-0.5 w-8 bg-amber-600 block" />
+                <h3 className="text-stone-900 font-extrabold text-lg uppercase tracking-tight">
+                  {s.title}
                 </h3>
-                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed font-medium">
-                  {cat.desc}
+                <p className="text-stone-600 text-sm font-medium leading-relaxed">
+                  {s.desc}
                 </p>
+              </div>
+              <div className="pt-6">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center text-xs font-extrabold text-amber-600 uppercase tracking-widest hover:underline min-h-[44px]"
+                >
+                  Inquire Technical Specifications →
+                </Link>
               </div>
             </div>
           ))}

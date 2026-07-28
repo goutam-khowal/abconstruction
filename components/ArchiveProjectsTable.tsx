@@ -13,10 +13,8 @@ interface HeritageProject {
     | "Industrial";
   location: string;
   mapsQuery: string;
-  hasPortfolioImages?: boolean;
 }
 
-// 🏛️ EXTRACTED 59 DELIVERED PROJECTS DATASET FROM YOUR HTML
 const completedProjectsData: HeritageProject[] = [
   {
     id: 1,
@@ -24,7 +22,6 @@ const completedProjectsData: HeritageProject[] = [
     location: "Lodhi Road, New Delhi",
     category: "Government/Embassy",
     mapsQuery: "M.E.S. Building Lodhi Road New Delhi",
-    hasPortfolioImages: true,
   },
   {
     id: 2,
@@ -91,360 +88,69 @@ const completedProjectsData: HeritageProject[] = [
   },
   {
     id: 11,
-    name: "D.L.F. Summer Field School",
-    location: "Greater Kailash 1, New Delhi",
-    category: "Institutional",
-    mapsQuery: "DLF Summer Fields School Greater Kailash New Delhi",
-  },
-  {
-    id: 12,
     name: "Japan Embassy",
     location: "Chanakyapuri, New Delhi",
     category: "Government/Embassy",
     mapsQuery: "Embassy of Japan Chanakyapuri New Delhi",
   },
   {
-    id: 13,
+    id: 12,
     name: "France Embassy",
     location: "Chanakyapuri, New Delhi",
     category: "Government/Embassy",
     mapsQuery: "Embassy of France Chanakyapuri New Delhi",
   },
   {
-    id: 14,
+    id: 13,
     name: "U.A.E. Embassy",
     location: "Chanakyapuri, New Delhi",
     category: "Government/Embassy",
     mapsQuery: "UAE Embassy Chanakyapuri New Delhi",
   },
   {
-    id: 15,
+    id: 14,
     name: "Singapore High Commission",
     location: "Chanakyapuri, New Delhi",
     category: "Government/Embassy",
     mapsQuery: "Singapore High Commission Chanakyapuri New Delhi",
   },
   {
-    id: 16,
-    name: "Denmark Embassy",
-    location: "Chanakyapuri, New Delhi",
-    category: "Government/Embassy",
-    mapsQuery: "Royal Danish Embassy Chanakyapuri New Delhi",
-  },
-  {
-    id: 17,
-    name: "Goa Sadan",
-    location: "Chanakyapuri, New Delhi",
-    category: "Government/Embassy",
-    mapsQuery: "Goa Sadan Chanakyapuri New Delhi",
-  },
-  {
-    id: 18,
-    name: "Ashok Hotel",
-    location: "Chanakyapuri, New Delhi",
-    category: "Commercial",
-    mapsQuery: "The Ashok Hotel Chanakyapuri New Delhi",
-  },
-  {
-    id: 19,
-    name: "Holiday Inn Hotel",
-    location: "Jaipur, Rajasthan",
-    category: "Commercial",
-    mapsQuery: "Holiday Inn Jaipur Rajasthan",
-  },
-  {
-    id: 20,
-    name: "Vikram Vintage Hotel",
-    location: "Nainital, Uttarakhand",
-    category: "Commercial",
-    mapsQuery: "Vikram Vintage Inn Nainital Uttarakhand",
-  },
-  {
-    id: 21,
-    name: "Vikram Hotel",
-    location: "Lajpat Nagar, New Delhi",
-    category: "Commercial",
-    mapsQuery: "Hotel Vikram Lajpat Nagar New Delhi",
-  },
-  {
-    id: 22,
-    name: "Khaitan House (W 51)",
-    location: "Greater Kailash 2, New Delhi",
-    category: "Residential",
-    mapsQuery: "W 51 Greater Kailash 2 New Delhi",
-  },
-  {
-    id: 23,
-    name: "Mittal House (C 15)",
-    location: "Greater Kailash 1, New Delhi",
-    category: "Residential",
-    mapsQuery: "C 15 Greater Kailash 1 New Delhi",
-  },
-  {
-    id: 24,
-    name: "Lohia House (R 69)",
-    location: "Greater Kailash 1, New Delhi",
-    category: "Residential",
-    mapsQuery: "R 69 Greater Kailash 1 New Delhi",
-  },
-  {
-    id: 25,
-    name: "Manan House (W 33)",
-    location: "Greater Kailash 2, New Delhi",
-    category: "Residential",
-    mapsQuery: "W 33 Greater Kailash 2 New Delhi",
-  },
-  {
-    id: 26,
-    name: "Puri House (12 No)",
-    location: "Old Friends Colony, New Delhi",
-    category: "Residential",
-    mapsQuery: "Old Friends Colony New Delhi",
-  },
-  {
-    id: 27,
-    name: "Vineet Nayyar House (5 No)",
-    location: "Old Friends Colony, New Delhi",
-    category: "Residential",
-    mapsQuery: "Old Friends Colony New Delhi",
-  },
-  {
-    id: 28,
-    name: "Gaiyan Farm House",
-    location: "Sainik Farm, New Delhi",
-    category: "Residential",
-    mapsQuery: "Sainik Farm New Delhi",
-  },
-  {
-    id: 29,
-    name: "Lakhotia Farm House",
-    location: "Sainik Farm, New Delhi",
-    category: "Residential",
-    mapsQuery: "Sainik Farm New Delhi",
-  },
-  {
-    id: 30,
-    name: "Jhunjhunwala Farm House",
-    location: "Sainik Farm, New Delhi",
-    category: "Residential",
-    mapsQuery: "Sainik Farm New Delhi",
-  },
-  {
-    id: 31,
-    name: "Jain Farm House",
-    location: "Bijwasan, New Delhi",
-    category: "Residential",
-    mapsQuery: "Bijwasan New Delhi",
-  },
-  {
-    id: 32,
-    name: "Aggarwal Farm House",
-    location: "Bijwasan, New Delhi",
-    category: "Residential",
-    mapsQuery: "Bijwasan New Delhi",
-  },
-  {
-    id: 33,
-    name: "Jain Farm House",
-    location: "Rangpuri, New Delhi",
-    category: "Residential",
-    mapsQuery: "Rangpuri New Delhi",
-  },
-  {
-    id: 34,
-    name: "Ahluwalia Farm House",
-    location: "Haridwar, Uttarakhand",
-    category: "Residential",
-    mapsQuery: "Haridwar Uttarakhand",
-  },
-  {
-    id: 35,
-    name: "Badal Farm House",
-    location: "Rania, Hisar, Haryana",
-    category: "Residential",
-    mapsQuery: "Rania Hisar Haryana",
-  },
-  {
-    id: 36,
+    id: 15,
     name: "SEBI Building",
     location: "BKC, Mumbai, Maharashtra",
     category: "Government/Embassy",
     mapsQuery: "SEBI Bhavan BKC Mumbai",
   },
   {
-    id: 37,
-    name: "I.D.B.I Building",
-    location: "BKC, Mumbai, Maharashtra",
-    category: "Commercial",
-    mapsQuery: "IDBI Tower BKC Mumbai",
-  },
-  {
-    id: 38,
-    name: "PNB Building",
-    location: "BKC, Mumbai, Maharashtra",
-    category: "Commercial",
-    mapsQuery: "Punjab National Bank BKC Mumbai",
-  },
-  {
-    id: 39,
-    name: "Chartered Accountant Building",
-    location: "BKC, Mumbai, Maharashtra",
-    category: "Institutional",
-    mapsQuery: "ICAI Tower BKC Mumbai",
-  },
-  {
-    id: 40,
-    name: "CBI Building",
-    location: "BKC, Mumbai, Maharashtra",
-    category: "Government/Embassy",
-    mapsQuery: "CBI Office BKC Mumbai",
-  },
-  {
-    id: 41,
-    name: "Amity University Campus",
-    location: "Panvel, Mumbai, Maharashtra",
-    category: "Institutional",
-    mapsQuery: "Amity University Panvel Mumbai",
-  },
-  {
-    id: 42,
+    id: 16,
     name: "Amity University Campus",
     location: "Sector 125, Noida, U.P.",
     category: "Institutional",
     mapsQuery: "Amity University Sector 125 Noida",
   },
   {
-    id: 43,
-    name: "Amity International School",
-    location: "Sector 44, Gurugram, Haryana",
-    category: "Institutional",
-    mapsQuery: "Amity International School Sector 44 Gurugram",
-  },
-  {
-    id: 44,
-    name: "Amity International School",
-    location: "Sector 46, Gurugram, Haryana",
-    category: "Institutional",
-    mapsQuery: "Amity International School Sector 46 Gurugram",
-  },
-  {
-    id: 45,
-    name: "Amity House (C-522)",
-    location: "Defence Colony, New Delhi",
-    category: "Residential",
-    mapsQuery: "C 522 Defence Colony New Delhi",
-  },
-  {
-    id: 46,
-    name: "Amity House (C-582)",
-    location: "Defence Colony, New Delhi",
-    category: "Residential",
-    mapsQuery: "C 582 Defence Colony New Delhi",
-  },
-  {
-    id: 47,
-    name: "Amity House (B-59)",
-    location: "Defence Colony, New Delhi",
-    category: "Residential",
-    mapsQuery: "B 59 Defence Colony New Delhi",
-  },
-  {
-    id: 48,
-    name: "Amity House (E-21)",
-    location: "Defence Colony, New Delhi",
-    category: "Residential",
-    mapsQuery: "E 21 Defence Colony New Delhi",
-  },
-  {
-    id: 49,
-    name: "Ahluwalia CMD House (B-10)",
-    location: "Saket, New Delhi",
-    category: "Residential",
-    mapsQuery: "B 10 Saket New Delhi",
-  },
-  {
-    id: 50,
-    name: "Ahluwalia Company Office (M-1)",
-    location: "Saket, New Delhi",
-    category: "Commercial",
-    mapsQuery: "M 1 Saket New Delhi",
-  },
-  {
-    id: 51,
+    id: 17,
     name: "HCL Head Office",
     location: "Noida, Uttar Pradesh",
     category: "Commercial",
     mapsQuery: "HCL Technologies Head Office Noida",
   },
   {
-    id: 52,
-    name: "Textile Mills Facility",
-    location: "Bhiwani, Haryana",
-    category: "Industrial",
-    mapsQuery: "Bhiwani Textile Mills Haryana",
-  },
-  {
-    id: 53,
-    name: "Birla Spinning Mills",
-    location: "Gwalior, Madhya Pradesh",
-    category: "Industrial",
-    mapsQuery: "Birla Mills Gwalior MP",
-  },
-  {
-    id: 54,
-    name: "Arham Spinning Mill",
-    location: "Bhiwadi, Rajasthan",
-    category: "Industrial",
-    mapsQuery: "Bhiwadi Rajasthan Industrial Area",
-  },
-  {
-    id: 55,
-    name: "CEAT Tyre Factory",
-    location: "Gwalior, Madhya Pradesh",
-    category: "Industrial",
-    mapsQuery: "CEAT Tyres Gwalior MP",
-  },
-  {
-    id: 56,
-    name: "ITI Factory Complex",
-    location: "Mankapur, Gonda, U.P.",
-    category: "Industrial",
-    mapsQuery: "ITI Factory Mankapur Gonda UP",
-  },
-  {
-    id: 57,
-    name: "JCT Factory Plant",
-    location: "Vadodara, Gujarat",
-    category: "Industrial",
-    mapsQuery: "JCT Plant Vadodara Gujarat",
-  },
-  {
-    id: 58,
+    id: 18,
     name: "NACIN Campus",
     location: "Palasamudram, Andhra Pradesh",
     category: "Institutional",
     mapsQuery: "NACIN Palasamudram Andhra Pradesh",
-    hasPortfolioImages: true,
   },
   {
-    id: 59,
+    id: 19,
     name: "Dharav Public School",
     location: "Gurugram, Haryana",
     category: "Institutional",
     mapsQuery: "Dharav Public School Gurugram",
-    hasPortfolioImages: true,
-  },
-  {
-    id: 60,
-    name: "Craft Museum",
-    location: "Varanasi (Banaras), U.P.",
-    category: "Institutional",
-    mapsQuery: "Craft Museum Varanasi UP",
   },
 ];
 
-// Strips periods, commas, hyphens, parens etc. and collapses whitespace,
-// so "dlf" matches "D.L.F." and "idbi" matches "I.D.B.I".
 function normalize(str: string) {
   return str
     .toLowerCase()
@@ -453,42 +159,10 @@ function normalize(str: string) {
     .trim();
 }
 
-// Escapes regex special chars so raw user input is safe to build a RegExp from
-function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-// Highlights matched terms inside the *original* (unnormalized) text.
-// Builds the pattern loosely so it still finds "D.L.F." when the term is "dlf".
-function highlightMatches(text: string, terms: string[]) {
-  if (terms.length === 0) return text;
-
-  // For each term, build a pattern that allows optional punctuation/spaces
-  // between its characters, e.g. "dlf" -> /d[.,\s]*l[.,\s]*f/i
-  const patterns = terms.map((term) =>
-    escapeRegExp(term).split("").join("[.,\\-\\s]*"),
-  );
-  const pattern = new RegExp(`(${patterns.join("|")})`, "gi");
-  const parts = text.split(pattern);
-
-  return parts.map((part, i) =>
-    pattern.test(part) && part.length > 0 ? (
-      <mark key={i} className="bg-amber-200 text-slate-900 rounded-sm px-0.5">
-        {part}
-      </mark>
-    ) : (
-      part
-    ),
-  );
-}
-
 export default function ArchiveProjectsTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-  // Split the query into individual terms so multi-word searches
-  // (e.g. "embassy delhi") match across name + location + category
-  // rather than requiring one field to contain the whole phrase.
   const searchTerms = useMemo(
     () => normalize(searchTerm).split(/\s+/).filter(Boolean),
     [searchTerm],
@@ -497,148 +171,131 @@ export default function ArchiveProjectsTable() {
   const filteredProjects = useMemo(() => {
     return completedProjectsData.filter((p) => {
       const haystack = normalize(`${p.name} ${p.location} ${p.category}`);
-
       const matchesSearch =
         searchTerms.length === 0 ||
         searchTerms.every((term) => haystack.includes(term));
-
       const matchesCategory =
         selectedCategory === "ALL" || p.category === selectedCategory;
-
       return matchesSearch && matchesCategory;
     });
   }, [searchTerms, selectedCategory]);
 
   return (
-    <section className="max-w-7xl mx-auto px-6 sm:px-12 py-16 font-sans">
-      {/* Header Context */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+    <section className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-12 sm:py-16 font-sans">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-4">
         <div>
-          <span className="text-brand-blue text-[10px] tracking-[0.3em] font-black uppercase block mb-1">
+          <span className="text-amber-600 text-xs tracking-widest font-extrabold uppercase block mb-1">
             Historic Deliveries Registry
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold uppercase text-stone-900 tracking-tight">
             Comprehensive Project Archive
           </h2>
-          <p className="text-slate-500 text-xs font-medium mt-1">
+          <p className="text-stone-600 text-xs sm:text-sm font-medium mt-1">
             Verified institutional, commercial, and embassy stone executions
             completed across India.
           </p>
         </div>
 
-        {/* Filter Controls */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search Project / Location / Sector..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 pr-8 bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue rounded-none shadow-sm min-w-[240px]"
-            />
-            {searchTerm && (
-              <button
-                type="button"
-                onClick={() => setSearchTerm("")}
-                aria-label="Clear search"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-sm font-bold"
-              >
-                ×
-              </button>
-            )}
-          </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+          <input
+            type="text"
+            placeholder="Search Project / Location..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full sm:w-auto px-4 py-2.5 bg-white border border-stone-300 text-sm font-semibold text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-600 rounded-sm min-h-[44px]"
+          />
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 bg-white border border-slate-300 text-xs font-bold uppercase text-slate-800 focus:outline-none focus:border-brand-blue rounded-none shadow-sm cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 bg-white border border-stone-300 text-xs font-bold uppercase text-stone-800 focus:outline-none focus:border-amber-600 rounded-sm cursor-pointer min-h-[44px]"
           >
             <option value="ALL">All Sectors</option>
             <option value="Government/Embassy">Govt & Embassy</option>
             <option value="Commercial">Commercial</option>
             <option value="Institutional">Institutional</option>
             <option value="Residential">Residential</option>
-            <option value="Industrial">Industrial</option>
           </select>
         </div>
       </div>
 
-      {/* Result count */}
-      <div className="mb-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-        {filteredProjects.length} of {completedProjectsData.length} records
+      {/* MOBILE VIEW */}
+      <div className="block sm:hidden space-y-3">
+        {filteredProjects.map((p, index) => (
+          <div
+            key={p.id}
+            className="bg-white border border-stone-200 p-4 rounded-sm shadow-sm space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono text-stone-400">
+                #{String(index + 1).padStart(2, "0")}
+              </span>
+              <span className="inline-block px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-sm bg-stone-100 text-stone-800 border border-stone-300">
+                {p.category}
+              </span>
+            </div>
+            <h3 className="font-extrabold text-stone-900 uppercase text-sm">
+              {p.name}
+            </h3>
+            <p className="text-stone-600 text-xs font-medium">
+              📍 {p.location}
+            </p>
+            <div className="pt-2 border-t border-stone-100 flex justify-end">
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.mapsQuery)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-extrabold text-amber-600 uppercase tracking-wider py-1 inline-flex items-center"
+              >
+                Open Maps →
+              </a>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Table Container */}
-      <div className="bg-white border border-slate-200 shadow-sm overflow-hidden rounded-md">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-slate-950 text-white text-[10px] uppercase tracking-widest font-black border-b-2 border-brand-blue">
-                <th className="py-4 px-6 w-16 text-center">#</th>
-                <th className="py-4 px-6">Project Title & Site</th>
-                <th className="py-4 px-6">Sector Domain</th>
-                <th className="py-4 px-6">Location Details</th>
-                <th className="py-4 px-6 text-center">Geo Navigation</th>
+      {/* DESKTOP VIEW */}
+      <div className="hidden sm:block bg-white border border-stone-200 shadow-sm overflow-hidden rounded-sm">
+        <table className="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr className="bg-stone-900 text-white text-[10px] uppercase tracking-widest font-extrabold border-b-2 border-amber-500">
+              <th className="py-4 px-6 w-16 text-center">#</th>
+              <th className="py-4 px-6">Project Title</th>
+              <th className="py-4 px-6">Sector</th>
+              <th className="py-4 px-6">Location</th>
+              <th className="py-4 px-6 text-center">Navigation</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-stone-100 font-semibold text-stone-700">
+            {filteredProjects.map((p, index) => (
+              <tr key={p.id} className="hover:bg-amber-50/50 transition-colors">
+                <td className="py-3.5 px-6 text-center text-stone-400 font-mono text-xs">
+                  {String(index + 1).padStart(2, "0")}
+                </td>
+                <td className="py-3.5 px-6 font-extrabold text-stone-900 uppercase">
+                  {p.name}
+                </td>
+                <td className="py-3.5 px-6">
+                  <span className="inline-block px-2.5 py-1 text-[10px] uppercase font-bold tracking-wider rounded-sm bg-stone-100 text-stone-800 border border-stone-200">
+                    {p.category}
+                  </span>
+                </td>
+                <td className="py-3.5 px-6 text-stone-600 font-medium">
+                  {p.location}
+                </td>
+                <td className="py-3.5 px-6 text-center">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.mapsQuery)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-bold text-amber-600 hover:text-amber-800 uppercase tracking-wider hover:underline"
+                  >
+                    📍 Maps
+                  </a>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
-              {filteredProjects.length > 0 ? (
-                filteredProjects.map((p, index) => (
-                  <tr
-                    key={p.id}
-                    className="hover:bg-blue-50/50 transition-colors duration-200"
-                  >
-                    <td className="py-3.5 px-6 text-center text-slate-400 font-mono text-[11px]">
-                      {String(index + 1).padStart(2, "0")}
-                    </td>
-                    <td className="py-3.5 px-6 font-extrabold text-slate-900 uppercase">
-                      {highlightMatches(p.name, searchTerms)}
-                    </td>
-                    <td className="py-3.5 px-6">
-                      <span
-                        className={`inline-block px-2.5 py-1 text-[9px] uppercase font-bold tracking-wider rounded-sm ${
-                          p.category === "Government/Embassy"
-                            ? "bg-amber-100 text-amber-900 border border-amber-300"
-                            : p.category === "Institutional"
-                              ? "bg-blue-100 text-blue-900 border border-blue-300"
-                              : p.category === "Commercial"
-                                ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
-                                : "bg-slate-100 text-slate-800 border border-slate-300"
-                        }`}
-                      >
-                        {p.category}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-6 text-slate-600 font-medium">
-                      {highlightMatches(p.location, searchTerms)}
-                    </td>
-                    <td className="py-3.5 px-6 text-center">
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                          p.mapsQuery,
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-blue hover:text-blue-800 uppercase tracking-wider hover:underline"
-                        title="View Location on Google Maps"
-                      >
-                        📍 Open Maps
-                      </a>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="py-12 text-center text-slate-400 uppercase tracking-wider font-bold text-xs"
-                  >
-                    No archive records matched your search parameters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
