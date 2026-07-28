@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 interface HeritageProject {
   id: number;
@@ -443,18 +443,71 @@ const completedProjectsData: HeritageProject[] = [
   },
 ];
 
+// Strips periods, commas, hyphens, parens etc. and collapses whitespace,
+// so "dlf" matches "D.L.F." and "idbi" matches "I.D.B.I".
+function normalize(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/[.,()\-\/]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Escapes regex special chars so raw user input is safe to build a RegExp from
+function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Highlights matched terms inside the *original* (unnormalized) text.
+// Builds the pattern loosely so it still finds "D.L.F." when the term is "dlf".
+function highlightMatches(text: string, terms: string[]) {
+  if (terms.length === 0) return text;
+
+  // For each term, build a pattern that allows optional punctuation/spaces
+  // between its characters, e.g. "dlf" -> /d[.,\s]*l[.,\s]*f/i
+  const patterns = terms.map((term) =>
+    escapeRegExp(term).split("").join("[.,\\-\\s]*"),
+  );
+  const pattern = new RegExp(`(${patterns.join("|")})`, "gi");
+  const parts = text.split(pattern);
+
+  return parts.map((part, i) =>
+    pattern.test(part) && part.length > 0 ? (
+      <mark key={i} className="bg-amber-200 text-slate-900 rounded-sm px-0.5">
+        {part}
+      </mark>
+    ) : (
+      part
+    ),
+  );
+}
+
 export default function ArchiveProjectsTable() {
-  const [searchTerm, setSearchType] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-  const filteredProjects = completedProjectsData.filter((p) => {
-    const matchesSearch =
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "ALL" || p.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Split the query into individual terms so multi-word searches
+  // (e.g. "embassy delhi") match across name + location + category
+  // rather than requiring one field to contain the whole phrase.
+  const searchTerms = useMemo(
+    () => normalize(searchTerm).split(/\s+/).filter(Boolean),
+    [searchTerm],
+  );
+
+  const filteredProjects = useMemo(() => {
+    return completedProjectsData.filter((p) => {
+      const haystack = normalize(`${p.name} ${p.location} ${p.category}`);
+
+      const matchesSearch =
+        searchTerms.length === 0 ||
+        searchTerms.every((term) => haystack.includes(term));
+
+      const matchesCategory =
+        selectedCategory === "ALL" || p.category === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchTerms, selectedCategory]);
 
   return (
     <section className="max-w-7xl mx-auto px-6 sm:px-12 py-16 font-sans">
@@ -475,13 +528,25 @@ export default function ArchiveProjectsTable() {
 
         {/* Filter Controls */}
         <div className="flex flex-wrap items-center gap-3">
-          <input
-            type="text"
-            placeholder="Search Project / Location..."
-            value={searchTerm}
-            onChange={(e) => setSearchType(e.target.value)}
-            className="px-4 py-2 bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue rounded-none shadow-sm min-w-[220px]"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search Project / Location / Sector..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-4 py-2 pr-8 bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue rounded-none shadow-sm min-w-[240px]"
+            />
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm("")}
+                aria-label="Clear search"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-sm font-bold"
+              >
+                ×
+              </button>
+            )}
+          </div>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -495,6 +560,11 @@ export default function ArchiveProjectsTable() {
             <option value="Industrial">Industrial</option>
           </select>
         </div>
+      </div>
+
+      {/* Result count */}
+      <div className="mb-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+        {filteredProjects.length} of {completedProjectsData.length} records
       </div>
 
       {/* Table Container */}
@@ -521,7 +591,7 @@ export default function ArchiveProjectsTable() {
                       {String(index + 1).padStart(2, "0")}
                     </td>
                     <td className="py-3.5 px-6 font-extrabold text-slate-900 uppercase">
-                      {p.name}
+                      {highlightMatches(p.name, searchTerms)}
                     </td>
                     <td className="py-3.5 px-6">
                       <span
@@ -539,7 +609,7 @@ export default function ArchiveProjectsTable() {
                       </span>
                     </td>
                     <td className="py-3.5 px-6 text-slate-600 font-medium">
-                      {p.location}
+                      {highlightMatches(p.location, searchTerms)}
                     </td>
                     <td className="py-3.5 px-6 text-center">
                       <a
@@ -559,7 +629,7 @@ export default function ArchiveProjectsTable() {
               ) : (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={5}
                     className="py-12 text-center text-slate-400 uppercase tracking-wider font-bold text-xs"
                   >
                     No archive records matched your search parameters.
