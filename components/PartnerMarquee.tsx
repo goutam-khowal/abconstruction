@@ -15,9 +15,6 @@ export default function PartnerMarquee() {
   const [loading, setLoading] = useState(true);
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
 
-  // Tracks whether a finger is currently held down on a card within each
-  // strip, so that strip's marquee animation can be paused for exactly the
-  // duration of the touch and resumed the instant the finger lifts.
   const [isTouchPausedTop, setIsTouchPausedTop] = useState(false);
   const [isTouchPausedBottom, setIsTouchPausedBottom] = useState(false);
 
@@ -73,7 +70,6 @@ export default function PartnerMarquee() {
             }),
           );
 
-          // Direct Client-Side Signed URLs Fetching
           let signedMap: Record<string, string> = {};
           if (pathList.length > 0) {
             const { data: signedData } = await supabase.storage
@@ -129,7 +125,7 @@ export default function PartnerMarquee() {
   if (partners.length === 0) return null;
 
   return (
-    <section className="bg-stone-950 py-16 sm:py-24 overflow-hidden border-y border-stone-800/80 text-white font-sans select-none relative">
+    <section className="bg-stone-900 py-16 sm:py-24 border-y border-stone-800/80 text-white font-sans select-none relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center mb-10 sm:mb-14">
         <span className="text-amber-500 text-xs tracking-[0.25em] font-extrabold uppercase block mb-2">
           Institutional Portfolio
@@ -139,11 +135,13 @@ export default function PartnerMarquee() {
         </h2>
       </div>
 
-      <div className="relative w-full space-y-6 sm:space-y-8 overflow-hidden">
-        <div className="absolute left-0 top-0 z-20 h-full w-20 sm:w-48 bg-gradient-to-r from-stone-950 via-stone-950/80 to-transparent pointer-events-none" />
-        <div className="absolute right-0 top-0 z-20 h-full w-20 sm:w-48 bg-gradient-to-l from-stone-950 via-stone-950/80 to-transparent pointer-events-none" />
+      <div className="relative w-full space-y-8 sm:space-y-12">
+        {/* Soft Vignette Overlay matching dark bg */}
+        <div className="absolute left-0 top-0 z-20 h-full w-20 sm:w-48 bg-gradient-to-r from-stone-900 via-stone-900/80 to-transparent pointer-events-none" />
+        <div className="absolute right-0 top-0 z-20 h-full w-20 sm:w-48 bg-gradient-to-l from-stone-900 via-stone-900/80 to-transparent pointer-events-none" />
 
-        <div className="flex w-full overflow-hidden py-2">
+        {/* TOP STRIP */}
+        <div className="flex w-full py-6">
           <div
             className="animate-carousel-fast-ltr hover:[animation-play-state:paused]"
             style={
@@ -173,7 +171,8 @@ export default function PartnerMarquee() {
           </div>
         </div>
 
-        <div className="flex w-full overflow-hidden py-2">
+        {/* BOTTOM STRIP */}
+        <div className="flex w-full py-6">
           <div
             className="animate-carousel-fast-rtl hover:[animation-play-state:paused]"
             style={
@@ -232,24 +231,29 @@ function LogoMarqueeCard({
       onTouchCancel={() => onTouchEnd(id)}
       className="relative group flex items-center justify-center shrink-0 cursor-pointer"
     >
+      {/* FLOATING AMBER HOVER BADGE */}
       <div
-        className={`absolute -top-10 left-1/2 -translate-x-1/2 transition-all duration-300 z-50 pointer-events-none whitespace-nowrap ${
+        className={`absolute -top-12 left-1/2 -translate-x-1/2 transition-all duration-300 z-50 pointer-events-none whitespace-nowrap ${
           isActive
-            ? "opacity-100 -translate-y-1"
-            : "opacity-0 group-hover:opacity-100 group-hover:-translate-y-1"
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 translate-y-2 scale-95"
         }`}
       >
-        <div className="bg-amber-600 text-white font-extrabold text-[10px] uppercase tracking-wider px-3 py-1 shadow-xl rounded-sm border border-amber-400/50">
+        <div className="bg-amber-600 text-white font-black text-[11px] uppercase tracking-wider px-3.5 py-1.5 shadow-2xl rounded-sm border border-amber-400">
           {name}
         </div>
+        <div className="w-2 h-2 bg-amber-600 border-r border-b border-amber-400 rotate-45 mx-auto -mt-1" />
       </div>
 
+      {/* CARD BODY: Warm Stone Alabaster bg-stone-50 default -> Pure bg-white on Hover/Touch */}
       <div
         className={`
-          relative w-44 sm:w-56 h-22 sm:h-24 px-5 py-3 flex items-center justify-center rounded-md bg-stone-900/90 border border-stone-800 shadow-md transition-all duration-300 backdrop-blur-sm ${
+          relative w-44 sm:w-56 h-22 sm:h-24 px-5 py-3 flex items-center justify-center rounded-md
+          border transition-all duration-300 ease-out transform backdrop-blur-sm
+          ${
             isActive
-              ? "-translate-y-1 border-amber-500/80 bg-stone-800 shadow-amber-500/10 shadow-lg"
-              : "group-hover:-translate-y-1 group-hover:border-amber-500/80 group-hover:bg-stone-800 group-hover:shadow-amber-500/10 group-hover:shadow-lg"
+              ? "-translate-y-1.5 scale-105 bg-white border-amber-500 shadow-[0_12px_24px_rgba(217,119,6,0.3)]"
+              : "bg-stone-50 border-stone-200/90 shadow-sm group-hover:-translate-y-1.5 group-hover:scale-105 group-hover:bg-white group-hover:border-amber-500 group-hover:shadow-[0_12px_24px_rgba(217,119,6,0.3)]"
           }
         `}
       >
@@ -261,11 +265,20 @@ function LogoMarqueeCard({
             height={50}
             loading="lazy"
             onError={() => setHasError(true)}
-            className="max-h-10 sm:max-h-12 w-auto object-contain filter brightness-90 contrast-125 opacity-75 group-hover:opacity-100 group-hover:brightness-100 group-hover:scale-105 transition-all duration-300"
+            /* ❌ ZERO GREYSCALE FILTER - Full original color & crisp 2px drop-shadow always */
+            className={`
+              max-h-10 sm:max-h-12 w-auto object-contain transition-all duration-300
+              drop-shadow-[2px_2px_2px_rgba(0,0,0,0.25)]
+              ${isActive ? "scale-105 opacity-100" : "opacity-90 group-hover:scale-105 group-hover:opacity-100"}
+            `}
             unoptimized
           />
         ) : (
-          <span className="text-xs font-extrabold tracking-wider uppercase text-stone-200 text-center line-clamp-2 group-hover:text-amber-400 transition-colors">
+          <span
+            className={`
+              text-xs font-extrabold tracking-wider uppercase text-center line-clamp-2 transition-colors duration-300 text-stone-900
+            `}
+          >
             {name}
           </span>
         )}
@@ -273,5 +286,3 @@ function LogoMarqueeCard({
     </div>
   );
 }
-
-
