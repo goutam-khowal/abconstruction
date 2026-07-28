@@ -131,12 +131,12 @@ export default function PartnerMarquee() {
         .live-marquee-ltr {
           display: flex;
           width: max-content;
-          animation: marqueeLtr 28s linear infinite;
+          animation: marqueeLtr 70s linear infinite;
         }
         .live-marquee-rtl {
           display: flex;
           width: max-content;
-          animation: marqueeRtl 28s linear infinite;
+          animation: marqueeRtl 70s linear infinite;
         }
 
         /* Desktop hover-only pause */

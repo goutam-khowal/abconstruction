@@ -85,14 +85,14 @@ body {
 .animate-carousel-fast-ltr {
   display: flex;
   width: max-content;
-  animation: carousel-fast-ltr 12s linear infinite;
+  animation: carousel-fast-ltr 60s linear infinite;
   /* Ultra Fast Speed! */
 }
 
 .animate-carousel-fast-rtl {
   display: flex;
   width: max-content;
-  animation: carousel-fast-rtl 12s linear infinite;
+  animation: carousel-fast-rtl 60s linear infinite;
   /* Ultra Fast Speed! */
 }
 
