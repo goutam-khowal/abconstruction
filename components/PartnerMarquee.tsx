@@ -99,7 +99,7 @@ export default function PartnerMarquee() {
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="w-48 sm:w-56 h-24 bg-slate-900 border border-slate-800 rounded-xl shrink-0 animate-pulse"
+              className="w-48 sm:w-56 h-24 bg-white border border-slate-200 rounded-xl shrink-0 animate-pulse"
             />
           ))}
         </div>
@@ -260,7 +260,7 @@ function LogoMarqueeCard({
       onContextMenu={(e) => e.preventDefault()}
       className="relative group flex items-center justify-center shrink-0 overflow-visible cursor-pointer select-none touch-manipulation no-touch-callout"
     >
-      {/* TOOLTIP POPUP */}
+      {/* 🎯 TOOLTIP POPUP */}
       <div
         className={`absolute -top-14 left-1/2 -translate-x-1/2 transition-all duration-300 transform z-50 pointer-events-none whitespace-nowrap ${
           isActive
@@ -274,7 +274,7 @@ function LogoMarqueeCard({
         <div className="w-2.5 h-2.5 bg-brand-blue rotate-45 mx-auto -mt-1.5 border-r border-b border-blue-400/80" />
       </div>
 
-      {/* CARD CONTAINER (HOVER / TOUCH -> WHITE BG) */}
+      {/* 🖼️ CARD CONTAINER (WHITE BG + DARK SHADOW DEFAULT STATE) */}
       <div
         className={`
           relative
@@ -282,15 +282,15 @@ function LogoMarqueeCard({
           px-6 py-4
           flex items-center justify-center
           rounded-xl
-          bg-slate-900/60
-          border border-white/10
-          backdrop-blur-sm
+          bg-white
+          border border-slate-200
+          shadow-[0_8px_20px_rgba(0,0,0,0.35)]
           transition-all duration-300
           overflow-hidden
           ${
             isActive
-              ? "bg-white border-white -translate-y-1 shadow-[0_10px_25px_rgba(0,0,0,0.3)]"
-              : "group-hover:bg-white group-hover:border-white group-hover:-translate-y-1 group-hover:shadow-[0_10px_25px_rgba(0,0,0,0.3)]"
+              ? "-translate-y-1.5 shadow-[0_16px_30px_rgba(0,0,0,0.5)] border-brand-blue/50"
+              : "group-hover:-translate-y-1.5 group-hover:shadow-[0_16px_30px_rgba(0,0,0,0.5)] group-hover:border-brand-blue/50"
           }
         `}
       >
@@ -302,7 +302,7 @@ function LogoMarqueeCard({
             height={60}
             draggable={false}
             onError={() => setHasError(true)}
-            /* 🌟 LOGO PNG DROP-SHADOW: Separates image shapes from white card bg */
+            /* 🌟 HOVER STATE: Logo turns colorful AND scales up cleanly (scale-110) */
             className={`
               relative z-10
               max-h-12
@@ -314,8 +314,8 @@ function LogoMarqueeCard({
               select-none
               ${
                 isActive
-                  ? "grayscale-0 opacity-100 scale-105 drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)]"
-                  : "grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 group-hover:drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)]"
+                  ? "grayscale-0 opacity-100 scale-110"
+                  : "grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
               }
             `}
             unoptimized
@@ -323,10 +323,10 @@ function LogoMarqueeCard({
         ) : (
           <div className="relative z-10 flex flex-col items-center justify-center text-center px-2 pointer-events-none select-none">
             <span
-              className={`text-[11px] font-black tracking-wider uppercase line-clamp-2 leading-tight transition-colors duration-300 ${
+              className={`text-[11px] font-black tracking-wider uppercase line-clamp-2 leading-tight transition-all duration-300 ${
                 isActive
-                  ? "text-slate-900"
-                  : "text-slate-100 group-hover:text-slate-900"
+                  ? "text-brand-blue scale-105"
+                  : "text-slate-900 group-hover:text-brand-blue group-hover:scale-105"
               }`}
             >
               {name}
