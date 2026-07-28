@@ -151,9 +151,16 @@ export default function PartnerMarquee() {
         .marquee-paused {
           animation-play-state: paused !important;
         }
+
+        /* 🔒 PREVENT MOBILE LONG-PRESS CALLOUT POPUP GLOBAL RULE */
+        .no-touch-callout {
+          -webkit-touch-callout: none !important;
+          -webkit-user-select: none !important;
+          user-select: none !important;
+        }
       `}</style>
 
-      <section className="bg-slate-950 py-20 overflow-hidden border-y border-slate-800 text-white font-sans select-none">
+      <section className="bg-slate-950 py-20 overflow-hidden border-y border-slate-800 text-white font-sans select-none no-touch-callout">
         <div className="max-w-7xl mx-auto px-6 sm:px-12 mb-12 text-center">
           <span className="text-brand-blue text-[10px] sm:text-xs tracking-[0.3em] font-black uppercase block mb-2">
             CLIENT PORTFOLIO
@@ -250,7 +257,9 @@ function LogoMarqueeCard({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
-      className="relative group flex items-center justify-center shrink-0 overflow-visible cursor-pointer select-none touch-manipulation"
+      /* 🔒 DISABLE RIGHT CLICK & LONG PRESS CONTEXT MENU */
+      onContextMenu={(e) => e.preventDefault()}
+      className="relative group flex items-center justify-center shrink-0 overflow-visible cursor-pointer select-none touch-manipulation no-touch-callout"
     >
       {/* 🎯 TOOLTIP POPUP (Visible on Desktop Hover OR Mobile Active Touch) */}
       <div
@@ -269,45 +278,59 @@ function LogoMarqueeCard({
       {/* 🖼️ CARD CONTAINER */}
       <div
         className={`
+          relative
           w-48 sm:w-56 h-24
           px-6 py-4
           flex items-center justify-center
           rounded-xl
-          bg-slate-900/60
+          bg-slate-900/80
           border border-white/10
           backdrop-blur-sm
           transition-all duration-300
           overflow-hidden
           ${
             isActive
-              ? "border-brand-blue/70 bg-slate-900 -translate-y-1 shadow-[0_0_30px_rgba(59,130,246,.25)]"
-              : "group-hover:border-brand-blue/70 group-hover:bg-slate-900 group-hover:-translate-y-1 group-hover:shadow-[0_0_30px_rgba(59,130,246,.15)]"
+              ? "border-brand-blue/80 bg-slate-900 -translate-y-1 shadow-[0_0_30px_rgba(59,130,246,.3)]"
+              : "group-hover:border-brand-blue/80 group-hover:bg-slate-900 group-hover:-translate-y-1 group-hover:shadow-[0_0_30px_rgba(59,130,246,.25)]"
           }
         `}
       >
+        {/* 🌟 NEON HALO BACKDROP GLOW (Only visible on hover / active touch) */}
+        <div
+          className={`
+            absolute inset-1 rounded-full bg-brand-blue/30 blur-xl pointer-events-none transition-opacity duration-500
+            ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
+          `}
+        />
+
         {logo && !hasError ? (
           <Image
             src={logo}
             alt={name}
             width={160}
             height={60}
+            /* 🔒 DISABLE IMAGE DRAGGING & DIRECT POINTER TARGETING */
+            draggable={false}
             onError={() => setHasError(true)}
             className={`
+              relative z-10
               max-h-12
               w-auto
               object-contain
               transition-all
               duration-300
+              pointer-events-none
+              select-none
               ${
                 isActive
-                  ? "grayscale-0 opacity-100 scale-105"
-                  : "grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+                  ? "grayscale-0 opacity-100 scale-105 drop-shadow-[0_0_12px_rgba(255,255,255,0.85)]"
+                  : "grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.85)]"
               }
             `}
             unoptimized
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-center px-2">
+          <div className="relative z-10 flex flex-col items-center justify-center text-center px-2 pointer-events-none select-none">
             <span
               className={`text-[11px] font-black tracking-wider uppercase line-clamp-2 leading-tight transition-colors duration-300 ${
                 isActive
