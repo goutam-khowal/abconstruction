@@ -100,3 +100,72 @@ body {
 .pause-on-hover:hover {
   animation-play-state: paused !important;
 }
+
+/* SCROLLBAR */
+/* 🎨 CUSTOM GLOBAL SCROLLBAR */
+
+/* 1. Firefox Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #020617;
+  /* thumb color | track color */
+}
+
+/* 2. WebKit Browsers (Chrome, Edge, Safari, Brave, Opera) */
+::-webkit-scrollbar {
+  width: 10px;
+  /* Vertical scrollbar width */
+  height: 10px;
+  /* Horizontal scrollbar height */
+}
+
+/* Track (Background) */
+::-webkit-scrollbar-track {
+  background: #020617;
+  /* Match your bg-slate-950 theme */
+}
+
+/* Handle (Thumb) */
+::-webkit-scrollbar-thumb {
+  background: #1e3a8a;
+  /* Dark Blue */
+  border-radius: 9999px;
+  /* Rounded pill shape */
+  border: 2px solid #020617;
+  /* Creates padding effect inside track */
+  transition: background 0.3s ease;
+}
+
+/* Handle on Hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+  /* Glowing Brand Blue on hover */
+}
+
+/* Handle when clicked / active */
+::-webkit-scrollbar-thumb:active {
+  background: #3b82f6;
+  /* Lighter blue highlight */
+}
+
+/* Corner junction when both vertical + horizontal scrollbars exist */
+::-webkit-scrollbar-corner {
+  background: #020617;
+}
+
+/* -------------------------------------------------- */
+
+.webkit-text-stroke {
+  -webkit-text-stroke-width: 1.5px;
+  -webkit-text-stroke-color: #ffffff;
+}
+
+/* Hide scrollbars for clean UI utility class */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
