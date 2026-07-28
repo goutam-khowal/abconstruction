@@ -119,9 +119,6 @@ export default function Navbar() {
         aria-label="Toggle Navigation Menu"
         aria-expanded={isDrawerOpen}
       >
-        <span className="text-xs font-bold uppercase tracking-wider">
-          {isDrawerOpen ? "Close" : "Menu"}
-        </span>
         <div className="w-4 h-3 flex flex-col justify-between">
           <span
             className={`w-full h-0.5 bg-current transition-transform duration-300 ${
