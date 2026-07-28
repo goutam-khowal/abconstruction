@@ -90,7 +90,7 @@ body {
   display: flex !important;
   flex-direction: row !important;
   width: max-content !important;
-  animation: carousel-fast-ltr 45s linear infinite;
+  animation: carousel-fast-ltr 90s linear infinite;
   will-change: transform;
 }
 
@@ -98,7 +98,7 @@ body {
   display: flex !important;
   flex-direction: row !important;
   width: max-content !important;
-  animation: carousel-fast-rtl 45s linear infinite;
+  animation: carousel-fast-rtl 90s linear infinite;
   will-change: transform;
 }
 
