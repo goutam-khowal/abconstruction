@@ -45,8 +45,7 @@ export default function PartnerMarquee() {
 
         if (dbPartners) {
           const pathList: string[] = [];
-          const partnerPathsMap: { id: string | number; fullPath: string }[] =
-            [];
+          const partnerPathsMap: { id: string | number; fullPath: string }[] = [];
 
           await Promise.all(
             dbPartners.map(async (partner: any) => {
@@ -135,13 +134,13 @@ export default function PartnerMarquee() {
         </h2>
       </div>
 
-      <div className="relative w-full space-y-8 sm:space-y-12 overflow-hidden">
+      <div className="relative w-full space-y-12 sm:space-y-16">
         {/* Soft Vignette Overlay */}
         <div className="absolute left-0 top-0 z-20 h-full w-16 sm:w-44 bg-gradient-to-r from-stone-900 via-stone-900/80 to-transparent pointer-events-none" />
         <div className="absolute right-0 top-0 z-20 h-full w-16 sm:w-44 bg-gradient-to-l from-stone-900 via-stone-900/80 to-transparent pointer-events-none" />
 
-        {/* TOP STRIP */}
-        <div className="flex w-full overflow-hidden py-4">
+        {/* TOP STRIP - Extra vertical padding (pt-10 pb-4) so tooltips don't get clipped */}
+        <div className="flex w-full overflow-visible pt-10 pb-4">
           <div
             className="animate-carousel-fast-ltr hover:[animation-play-state:paused] flex shrink-0 items-center w-max"
             style={
@@ -171,12 +170,14 @@ export default function PartnerMarquee() {
           </div>
         </div>
 
-        {/* BOTTOM STRIP */}
-        <div className="flex w-full overflow-hidden py-4">
+        {/* BOTTOM STRIP - Extra vertical padding (pt-10 pb-4) */}
+        <div className="flex w-full overflow-visible pt-10 pb-4">
           <div
             className="animate-carousel-fast-rtl hover:[animation-play-state:paused] flex shrink-0 items-center w-max"
             style={
-              isTouchPausedBottom ? { animationPlayState: "paused" } : undefined
+              isTouchPausedBottom
+                ? { animationPlayState: "paused" }
+                : undefined
             }
           >
             {[
@@ -231,15 +232,15 @@ function LogoMarqueeCard({
       onTouchCancel={() => onTouchEnd(id)}
       className="relative group flex items-center justify-center shrink-0 cursor-pointer"
     >
-      {/* FLOATING AMBER HOVER BADGE */}
+      {/* FLOATING BADGE WITH SAFE SPACING (-top-10) */}
       <div
-        className={`absolute -top-11 left-1/2 -translate-x-1/2 transition-all duration-300 z-100 pointer-events-none whitespace-nowrap ${
+        className={`absolute -top-10 left-1/2 -translate-x-1/2 transition-all duration-300 z-50 pointer-events-none whitespace-nowrap ${
           isActive
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 translate-y-2 scale-95"
         }`}
       >
-        <div className="bg-amber-600 text-white font-black text-[10px] uppercase tracking-wider px-3 py-1 shadow-xl rounded-sm border border-amber-400">
+        <div className="bg-amber-600 text-white font-extrabold text-[10px] uppercase tracking-wider px-3 py-1 shadow-2xl rounded-sm border border-amber-400">
           {name}
         </div>
         <div className="w-2 h-2 bg-amber-600 border-r border-b border-amber-400 rotate-45 mx-auto -mt-1" />
