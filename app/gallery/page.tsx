@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
-import ArchiveProjectsTable from "@/components/ArchiveProjectsTable";
 
 interface GalleryProject {
   id: string;
@@ -123,12 +122,17 @@ export default function GalleryPage() {
 
           setProjects(mapped);
           if (mapped.length > 0) {
-            setOpenAccordions([mapped[0].id]);
-            fetchImagesForProject(
-              mapped[0].id,
-              mapped[0].folderSearchName,
-              mapped[0].title,
-            );
+            // Open all accordions by default
+            setOpenAccordions(mapped.map((project) => project.id));
+
+            // Load images for all projects
+            mapped.forEach((project) => {
+              fetchImagesForProject(
+                project.id,
+                project.folderSearchName,
+                project.title,
+              );
+            });
           }
         }
       } catch (err) {
