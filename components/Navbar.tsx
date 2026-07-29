@@ -6,8 +6,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navigationMap = [
-  { label: "Company Profile", path: "/about" },
-  { label: "Projects", path: "/projects" },
+  { label: "About Us", path: "/about" },
+  { label: "Projects & Clients", path: "/projects" },
   { label: "Services", path: "/services" },
   { label: "Gallery", path: "/gallery" },
 ];
