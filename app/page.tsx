@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import PartnerMarquee from "@/components/PartnerMarquee";
+import PartnerMarquee from "@/components/InstitutionalClientsGrid";
 
 const stats = [
   { value: "40+", label: "Years In Business" },
@@ -94,9 +94,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* CLIENT MARQUEE */}
-      <PartnerMarquee />
     </div>
   );
 }

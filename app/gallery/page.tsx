@@ -267,7 +267,7 @@ export default function GalleryPage() {
       <section className="relative min-h-[40vh] sm:min-h-[45vh] flex items-center bg-stone-900 text-white pt-28 sm:pt-32 pb-12 sm:pb-16">
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/80 to-transparent z-10" />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full">
-          <span className="text-amber-500 text-xs tracking-widest font-extrabold uppercase block mb-2">
+          <span className="text-amber-500 text-xs tracking-widest uppercase font-extrabold block mb-2">
             Media Lookbook Portfolio
           </span>
           <h1 className="text-3xl sm:text-5xl font-light tracking-tight text-white uppercase leading-tight">

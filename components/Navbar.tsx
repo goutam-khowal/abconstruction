@@ -6,10 +6,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navigationMap = [
-  { label: "Company Profile", path: "/about" },
-  { label: "Projects", path: "/projects" },
-  { label: "Services", path: "/services" },
+  { label: "Projects & Clients", path: "/projects" },
   { label: "Gallery", path: "/gallery" },
+  { label: "Services", path: "/services" },
+  { label: "About", path: "/about" },
 ];
 
 export default function Navbar() {
@@ -155,9 +155,6 @@ export default function Navbar() {
         }`}
       >
         <div className="flex flex-col space-y-3">
-          <span className="text-xs uppercase font-extrabold tracking-widest text-amber-500 mb-2">
-            Navigation
-          </span>
           {navigationMap.map((node) => {
             const isTargetActive = currentPath === node.path;
             return (

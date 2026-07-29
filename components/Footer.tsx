@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-stone-950 border-t border-stone-800 pt-12 sm:pt-16 pb-8 text-stone-400 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <Image
@@ -25,29 +25,6 @@ export default function Footer() {
               Expert laying, diamond polishing, and stone cladding across India
               since 1977.
             </p>
-          </div>
-
-          <div>
-            <h4 className="text-xs tracking-widest uppercase text-stone-300 font-extrabold mb-4">
-              Project Domains
-            </h4>
-            <ul className="space-y-2 text-xs font-bold uppercase">
-              {[
-                "Commercial Projects",
-                "Public Projects",
-                "Residential Projects",
-                "Healthcare Projects",
-              ].map((item) => (
-                <li key={item}>
-                  <Link
-                    href="/projects"
-                    className="text-stone-400 hover:text-amber-400 py-1 block min-h-[36px] flex items-center"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
 
           <div>
