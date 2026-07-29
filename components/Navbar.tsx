@@ -155,9 +155,7 @@ export default function Navbar() {
         }`}
       >
         <div className="flex flex-col space-y-3">
-          <span className="text-xs uppercase font-extrabold tracking-widest text-amber-500 mb-2">
-            Navigation
-          </span>
+          
           {navigationMap.map((node) => {
             const isTargetActive = currentPath === node.path;
             return (
