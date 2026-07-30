@@ -186,15 +186,6 @@ function ClientBrandCard({
 }) {
   const [hasError, setHasError] = useState(false);
 
-  // Fallback initials generator
-  const initials = name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
-
   return (
     <div className="group relative flex flex-col justify-between w-full min-h-[220px] sm:min-h-[250px] p-3.5 sm:p-4 bg-stone-900/90 hover:bg-stone-900 border border-stone-800 hover:border-amber-500/80 rounded-lg shadow-md hover:shadow-[0_10px_24px_rgba(217,119,6,0.2)] transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98]">
       {/* Top Accent Bar */}
@@ -214,8 +205,8 @@ function ClientBrandCard({
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-stone-800">
-            <span className="text-lg sm:text-2xl font-black tracking-widest text-amber-600">
-              {initials}
+            <span className="sm:text-lg font-black text-center text-amber-600">
+              {name}
             </span>
           </div>
         )}
