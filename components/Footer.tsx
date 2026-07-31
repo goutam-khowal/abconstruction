@@ -34,9 +34,9 @@ export default function Footer() {
             <ul className="space-y-2 text-xs font-bold uppercase">
               {[
                 { label: "Home", path: "/" },
-                { label: "Company Profile", path: "/about" },
+                { label: "About Us", path: "/about" },
                 { label: "Gallery", path: "/gallery" },
-                { label: "Projects", path: "/projects" },
+                { label: "Projects & Clients", path: "/projects" },
                 { label: "Services", path: "/services" },
                 { label: "Contact Us", path: "/contact" },
               ].map((item) => (
