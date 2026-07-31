@@ -79,9 +79,9 @@ export default function HomePage() {
             </h2>
             <p className="text-stone-600 text-sm sm:text-base leading-relaxed font-medium">
               We focus on the structural polishing, chemical treatment, and
-              seamless execution of high-end imports, ceramic layers, and rustic
-              Kota alignments across commercial, government, and residential
-              heritage spaces.
+              seamless execution with high end finish of Italian marble,
+              granites &amp; all types of tiles across commercial, government,
+              and residential heritage spaces.
             </p>
             <div className="pt-2">
               <Link
