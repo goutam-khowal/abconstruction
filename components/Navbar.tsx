@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navigationMap = [
+  { label: "Home", path: "/" },
   { label: "Projects & Clients", path: "/projects" },
   { label: "Gallery", path: "/gallery" },
   { label: "Services", path: "/services" },
@@ -71,26 +72,28 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-10">
-            {navigationMap.map((node) => {
-              const isTargetActive = currentPath === node.path;
-              return (
-                <Link
-                  key={node.path}
-                  href={node.path}
-                  className={`text-xs tracking-wider font-bold uppercase transition-colors relative py-2 min-h-[44px] flex items-center focus:outline-none focus:text-amber-500 ${
-                    isScrolled
-                      ? isTargetActive
-                        ? "text-amber-400 font-extrabold border-b-2 border-amber-400"
-                        : "text-stone-300 hover:text-white"
-                      : isTargetActive
-                        ? "text-amber-600 md:text-amber-400 font-extrabold border-b-2 border-amber-500"
-                        : "text-stone-700 md:text-stone-200 hover:text-stone-900 md:hover:text-white"
-                  }`}
-                >
-                  {node.label}
-                </Link>
-              );
-            })}
+            {navigationMap
+              .filter((node) => node.path !== "/")
+              .map((node) => {
+                const isTargetActive = currentPath === node.path;
+                return (
+                  <Link
+                    key={node.path}
+                    href={node.path}
+                    className={`text-xs tracking-wider font-bold uppercase transition-colors relative py-2 min-h-[44px] flex items-center focus:outline-none focus:text-amber-500 ${
+                      isScrolled
+                        ? isTargetActive
+                          ? "text-amber-400 font-extrabold border-b-2 border-amber-400"
+                          : "text-stone-300 hover:text-white"
+                        : isTargetActive
+                          ? "text-amber-600 md:text-amber-400 font-extrabold border-b-2 border-amber-500"
+                          : "text-stone-700 md:text-stone-200 hover:text-stone-900 md:hover:text-white"
+                    }`}
+                  >
+                    {node.label}
+                  </Link>
+                );
+              })}
           </nav>
 
           <div className="hidden md:block">
