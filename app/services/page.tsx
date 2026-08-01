@@ -39,8 +39,8 @@ const serviceItems = [
     desc: "Precision laying, chemical epoxy treatment, seamless joint alignment, and multi-stage mirror diamond polishing for high-end luxury imported slabs.",
   },
   {
-    title: "Granite & Structural Stone Execution",
-    desc: "Heavy-duty outdoor and indoor structural stone fitting, Kota step linings, and Dholpur facade claddings engineered for long-term commercial wear.",
+    title: "Granite & Dholpur Architectural Stone Execution",
+    desc: "Heavy-duty outdoor and indoor structural stone fitting, high-end finish of Italian marble, granites & all types of tiles, and Dholpur facade claddings engineered for long-term commercial wear.",
   },
   {
     title: "High-Performance Tile & Facade Cladding",
