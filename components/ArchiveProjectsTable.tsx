@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface HeritageProject {
   id: number;
@@ -16,7 +21,6 @@ interface HeritageProject {
   hasPortfolioImages?: boolean;
 }
 
-// 🏛️ EXTRACTED 59 DELIVERED PROJECTS DATASET FROM YOUR HTML
 const completedProjectsData: HeritageProject[] = [
   {
     id: 1,
@@ -443,8 +447,6 @@ const completedProjectsData: HeritageProject[] = [
   },
 ];
 
-// Strips periods, commas, hyphens, parens etc. and collapses whitespace,
-// so "dlf" matches "D.L.F." and "idbi" matches "I.D.B.I".
 function normalize(str: string) {
   return str
     .toLowerCase()
@@ -453,18 +455,13 @@ function normalize(str: string) {
     .trim();
 }
 
-// Escapes regex special chars so raw user input is safe to build a RegExp from
 function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Highlights matched terms inside the *original* (unnormalized) text.
-// Builds the pattern loosely so it still finds "D.L.F." when the term is "dlf".
 function highlightMatches(text: string, terms: string[]) {
   if (terms.length === 0) return text;
 
-  // For each term, build a pattern that allows optional punctuation/spaces
-  // between its characters, e.g. "dlf" -> /d[.,\s]*l[.,\s]*f/i
   const patterns = terms.map((term) =>
     escapeRegExp(term).split("").join("[.,\\-\\s]*"),
   );
@@ -483,12 +480,12 @@ function highlightMatches(text: string, terms: string[]) {
 }
 
 export default function ArchiveProjectsTable() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-  // Split the query into individual terms so multi-word searches
-  // (e.g. "embassy delhi") match across name + location + category
-  // rather than requiring one field to contain the whole phrase.
   const searchTerms = useMemo(
     () => normalize(searchTerm).split(/\s+/).filter(Boolean),
     [searchTerm],
@@ -509,10 +506,66 @@ export default function ArchiveProjectsTable() {
     });
   }, [searchTerms, selectedCategory]);
 
+  // Section Scrub: 2 Entrance setup
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        ".archive-header-box",
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+            end: "top 55%",
+            scrub: 2,
+          },
+        },
+      );
+
+      gsap.fromTo(
+        ".archive-table-container",
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          scrollTrigger: {
+            trigger: ".archive-table-container",
+            start: "top 90%",
+            end: "top 60%",
+            scrub: 2,
+          },
+        },
+      );
+    },
+    { scope: sectionRef },
+  );
+
+  // Stagger animate rows when searching/filtering
+  useEffect(() => {
+    if (!tableBodyRef.current) return;
+
+    gsap.fromTo(
+      tableBodyRef.current.querySelectorAll("tr"),
+      { opacity: 0, y: 8 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.3,
+        stagger: 0.02,
+        ease: "power2.out",
+      },
+    );
+  }, [filteredProjects]);
+
   return (
-    <section className="max-w-7xl mx-auto px-6 sm:px-12 py-16 font-sans">
+    <section
+      ref={sectionRef}
+      className="max-w-7xl mx-auto px-6 sm:px-12 py-16 font-sans"
+    >
       {/* Header Context */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div className="archive-header-box flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <span className="text-brand-blue text-[10px] tracking-[0.3em] font-black uppercase block mb-1">
             Historic Deliveries Registry
@@ -568,7 +621,7 @@ export default function ArchiveProjectsTable() {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white border border-slate-200 shadow-sm overflow-hidden rounded-md">
+      <div className="archive-table-container bg-white border border-slate-200 shadow-sm overflow-hidden rounded-md">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
@@ -580,7 +633,10 @@ export default function ArchiveProjectsTable() {
                 <th className="py-4 px-6 text-center">Geo Navigation</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+            <tbody
+              ref={tableBodyRef}
+              className="divide-y divide-slate-100 font-semibold text-slate-700"
+            >
               {filteredProjects.length > 0 ? (
                 filteredProjects.map((p, index) => (
                   <tr
