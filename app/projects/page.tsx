@@ -13,11 +13,11 @@ export default function ProjectsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
 
+  // GSAP Animation Start: Hero Cinematic Reveal & Scroll Parallax
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
 
-      // Reduced motion: settle everything into its final state instantly.
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(
           [
@@ -25,7 +25,7 @@ export default function ProjectsPage() {
             ".projects-hero-badge-rule",
             ".projects-hero-title-line",
           ],
-          { opacity: 1, y: 0, clearProps: "filter" },
+          { opacity: 1, y: 0, scaleX: 1, clearProps: "filter,clipPath" },
         );
       });
 
@@ -33,46 +33,46 @@ export default function ProjectsPage() {
         const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
         heroTl
-          .from(".projects-hero-badge", {
-            opacity: 0,
-            y: -12,
-            duration: 0.6,
-            delay: 0.1,
-          })
-          // Signature move: a thin rule revealing left-to-right, like a
-          // chisel stroke opening the page — reused as the motif across
-          // every section eyebrow on this site.
+          .fromTo(
+            ".projects-hero-badge",
+            { opacity: 0, y: -10 },
+            { opacity: 1, y: 0, duration: 0.5, delay: 0.1 },
+          )
           .fromTo(
             ".projects-hero-badge-rule",
             { scaleX: 0 },
-            { scaleX: 1, duration: 0.5, ease: "power2.out" },
-            "-=0.25",
+            { scaleX: 1, duration: 0.6, ease: "expo.out" },
+            "-=0.2",
           )
-          .from(
+          .fromTo(
             ".projects-hero-title-line",
             {
               opacity: 0,
-              y: 32,
-              filter: "blur(6px)",
-              duration: 0.9,
-              stagger: 0.15,
+              y: 40,
+              filter: "blur(8px)",
+              clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
+            },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+              duration: 1,
+              stagger: 0.18,
               ease: "expo.out",
             },
             "-=0.3",
           );
 
-        // Parallax drift: background content drifts and softens as the
-        // hero scrolls away, but never fades past legibility while any
-        // part of the hero is still on screen.
         gsap.to(".projects-hero-content", {
-          y: -50,
-          opacity: 0.35,
+          y: -40,
+          opacity: 0.25,
           ease: "none",
           scrollTrigger: {
             trigger: heroRef.current,
             start: "top top",
             end: "bottom top",
-            scrub: 1.2,
+            scrub: 1,
           },
         });
 
@@ -83,6 +83,7 @@ export default function ProjectsPage() {
     },
     { scope: containerRef },
   );
+  // GSAP Animation End: Hero Cinematic Reveal & Scroll Parallax
 
   return (
     <div ref={containerRef} className="bg-stone-50 text-stone-900 font-sans">

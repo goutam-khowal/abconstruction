@@ -131,54 +131,61 @@ export default function InstitutionalClientsGrid() {
     fetchPartners();
   }, []);
 
-  // Grid reveal: one-shot stagger, not scroll-scrubbed — this is a simple
-  // "arrive once" moment, not a scroll-driven story, so scrub would only
-  // make it feel laggy on a fast scroll.
+  // GSAP Animation Start: Grid Entrance & Stagger Sequence
   useGSAP(
     () => {
-      if (loading || partners.length === 0) return;
+      if (loading || partners.length === 0 || !gridRef.current) return;
+
+      const cards = gridRef.current.querySelectorAll(".client-card-anim");
+      if (cards.length === 0) return;
 
       const mm = gsap.matchMedia();
 
-      // 1. Accessibility: Instant render for users preferring reduced motion
       mm.add("(prefers-reduced-motion: reduce)", () => {
-        gsap.set(".client-card-anim", { opacity: 1, y: 0, filter: "none" });
+        gsap.set([cards, ".grid-header-rule"], { opacity: 1, y: 0, scaleX: 1 });
       });
 
-      // 2. Ultra-Smooth Scrubbed Entrance
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.fromTo(
-          ".client-card-anim",
-          {
-            opacity: 0,
-            y: 40,
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
           },
+        });
+
+        tl.fromTo(
+          ".grid-header-rule",
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.6, ease: "expo.out" },
+        ).fromTo(
+          cards,
+          { opacity: 0, y: 30, scale: 0.96 },
           {
             opacity: 1,
             y: 0,
-            stagger: 0.2,
-            ease: "linear", 
-            scrollTrigger: {
-              trigger: gridRef.current,
-              start: "top 85%", //
-              end: "top 35%", //
-              scrub: 1.5,
-              markers: true,
+            scale: 1,
+            duration: 0.6,
+            stagger: {
+              grid: "auto",
+              amount: 0.6,
             },
+            ease: "power3.out",
           },
+          "-=0.3",
         );
       });
 
-      // 3. Handle dynamic height changes after async images / signed URLs load
       const refreshId = requestAnimationFrame(() => ScrollTrigger.refresh());
 
       return () => {
         cancelAnimationFrame(refreshId);
-        mm.revert(); // Automatically cleans up matchMedia, tweens, and scrollTriggers
+        mm.revert();
       };
     },
     { dependencies: [loading, partners], scope: containerRef },
   );
+  // GSAP Animation End: Grid Entrance & Stagger Sequence
 
   if (loading) {
     return (
@@ -236,7 +243,7 @@ export default function InstitutionalClientsGrid() {
           Institutional Portfolio
         </span>
         <span
-          className="inline-block h-[2px] w-14 bg-amber-500/70 mb-4"
+          className="grid-header-rule inline-block h-[2px] w-14 bg-amber-500/70 mb-4 origin-center"
           aria-hidden="true"
         />
         <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
@@ -274,9 +281,48 @@ function ClientBrandCard({
   logo: string | null;
 }) {
   const [hasError, setHasError] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // GSAP Animation Start: 3D Mouse Movement Hover Effect
+  const { contextSafe } = useGSAP({ scope: cardRef });
+
+  const handleMouseMove = contextSafe((e: React.MouseEvent<HTMLDivElement>) => {
+    if (
+      !cardRef.current ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    gsap.to(cardRef.current, {
+      rotateX: -y * 0.05,
+      rotateY: x * 0.05,
+      transformPerspective: 600,
+      duration: 0.3,
+      ease: "power1.out",
+    });
+  });
+
+  const handleMouseLeave = contextSafe(() => {
+    if (!cardRef.current) return;
+    gsap.to(cardRef.current, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  });
+  // GSAP Animation End: 3D Mouse Movement Hover Effect
 
   return (
-    <div className="client-card-anim group relative flex flex-col justify-between w-full min-h-[220px] sm:min-h-[250px] p-3.5 sm:p-4 bg-stone-900/90 hover:bg-stone-900 border border-stone-800 hover:border-amber-500/80 rounded-lg shadow-md hover:shadow-[0_10px_24px_rgba(217,119,6,0.2)] transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98]">
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="client-card-anim group relative flex flex-col justify-between w-full min-h-[220px] sm:min-h-[250px] p-3.5 sm:p-4 bg-stone-900/90 hover:bg-stone-900 border border-stone-800 hover:border-amber-500/80 rounded-lg shadow-md hover:shadow-[0_10px_24px_rgba(217,119,6,0.2)] transition-colors duration-300 transform-gpu"
+    >
       {/* Top Accent Bar */}
       <div className="w-6 sm:w-8 h-[2px] bg-stone-700 group-hover:bg-amber-500 group-hover:w-12 transition-all duration-300 rounded-full mb-2" />
 

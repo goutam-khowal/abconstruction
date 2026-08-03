@@ -509,65 +509,83 @@ export default function ArchiveProjectsTable() {
     });
   }, [searchTerms, selectedCategory]);
 
-  // One-shot entrance for the header and table shell. This is a simple
-  // "arrive once" reveal, not a scroll-driven story, so a plain
-  // toggleActions trigger reads better than scrubbing it to scroll speed.
+  // GSAP Animation Start: Section Header & Table Shell Entrance
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         prefersReducedMotion.current = true;
-        gsap.set([".archive-header-box", ".archive-table-container"], {
-          opacity: 1,
-          y: 0,
-        });
+        gsap.set(
+          [
+            ".archive-header-box",
+            ".archive-rule-line",
+            ".archive-table-container",
+          ],
+          {
+            opacity: 1,
+            y: 0,
+            scaleX: 1,
+            clearProps: "filter",
+          },
+        );
       });
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         prefersReducedMotion.current = false;
 
-        gsap.fromTo(
-          ".archive-header-box",
-          { opacity: 0, y: 28 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+            toggleActions: "play none none none",
           },
-        );
+        });
 
-        gsap.fromTo(
-          ".archive-table-container",
-          { opacity: 0, y: 32 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: ".archive-table-container",
-              start: "top 90%",
-              toggleActions: "play none none none",
+        tl.fromTo(
+          ".archive-header-eyebrow",
+          { opacity: 0, y: -8 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        )
+          .fromTo(
+            ".archive-rule-line",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.6, ease: "expo.out" },
+            "-=0.25",
+          )
+          .fromTo(
+            ".archive-header-title",
+            { opacity: 0, y: 18, filter: "blur(4px)" },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.7,
+              ease: "power3.out",
             },
-          },
-        );
+            "-=0.4",
+          )
+          .fromTo(
+            ".archive-header-desc",
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+            "-=0.4",
+          )
+          .fromTo(
+            ".archive-table-container",
+            { opacity: 0, y: 24, scale: 0.99 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out" },
+            "-=0.3",
+          );
       });
 
       return () => mm.revert();
     },
     { scope: sectionRef },
   );
+  // GSAP Animation End: Section Header & Table Shell Entrance
 
-  // Row stagger on search/filter changes — a single source of truth for
-  // this animation (rather than a second, competing effect) so it never
-  // races the entrance tween above.
+  // GSAP Animation Start: Row Staggering on Filter Update
   const { contextSafe } = useGSAP({ scope: sectionRef });
 
   const animateRows = contextSafe(() => {
@@ -577,14 +595,19 @@ export default function ArchiveProjectsTable() {
       gsap.set(rows, { opacity: 1, y: 0 });
       return;
     }
+
+    gsap.killTweensOf(rows);
     gsap.fromTo(
       rows,
-      { opacity: 0, y: 10 },
+      { opacity: 0, y: 12 },
       {
         opacity: 1,
         y: 0,
         duration: 0.35,
-        stagger: 0.02,
+        stagger: {
+          each: 0.018,
+          amount: 0.25,
+        },
         ease: "power2.out",
       },
     );
@@ -593,9 +616,9 @@ export default function ArchiveProjectsTable() {
   useEffect(() => {
     animateRows();
   }, [filteredProjects, animateRows]);
+  // GSAP Animation End: Row Staggering on Filter Update
 
-  // Animate the result count as a number tween on a ref, so rapid typing
-  // doesn't fight React's render cycle with dozens of state updates.
+  // GSAP Animation Start: Numerical Counter Tween
   useEffect(() => {
     const target = filteredProjects.length;
     if (prefersReducedMotion.current || !countRef.current) {
@@ -603,10 +626,11 @@ export default function ArchiveProjectsTable() {
       if (countRef.current) countRef.current.textContent = String(target);
       return;
     }
+
     const obj = { val: countValue.current };
     const tween = gsap.to(obj, {
       val: target,
-      duration: 0.4,
+      duration: 0.45,
       ease: "power2.out",
       onUpdate: () => {
         if (countRef.current) {
@@ -617,10 +641,12 @@ export default function ArchiveProjectsTable() {
         countValue.current = target;
       },
     });
+
     return () => {
       tween.kill();
     };
   }, [filteredProjects]);
+  // GSAP Animation End: Numerical Counter Tween
 
   return (
     <section
@@ -630,17 +656,17 @@ export default function ArchiveProjectsTable() {
       {/* Header Context */}
       <div className="archive-header-box flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
-          <span className="text-brand-blue text-[10px] tracking-[0.3em] font-black uppercase block mb-1">
+          <span className="archive-header-eyebrow text-brand-blue text-[10px] tracking-[0.3em] font-black uppercase block mb-1">
             Historic Deliveries Registry
           </span>
           <span
-            className="block h-[2px] w-14 bg-brand-blue/70 mb-3"
+            className="archive-rule-line block h-[2px] w-14 bg-brand-blue/70 mb-3 origin-left"
             aria-hidden="true"
           />
-          <h2 className="text-2xl sm:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">
+          <h2 className="archive-header-title text-2xl sm:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">
             Comprehensive Project Archive
           </h2>
-          <p className="text-slate-500 text-xs font-medium mt-1">
+          <p className="archive-header-desc text-slate-500 text-xs font-medium mt-1">
             Verified institutional, commercial, and embassy stone executions
             completed across India.
           </p>
@@ -712,9 +738,6 @@ export default function ArchiveProjectsTable() {
                     className="group relative hover:bg-blue-50/50 transition-colors duration-200"
                   >
                     <td className="py-3.5 px-6 text-center text-slate-400 font-mono text-[11px] relative">
-                      {/* Ledger-highlight accent: a thin bar that grows in
-                          on hover, echoing the eyebrow rule motif used
-                          elsewhere on the page. */}
                       <span
                         className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] bg-brand-blue scale-y-0 group-hover:scale-y-100 origin-center transition-transform duration-200"
                         aria-hidden="true"
