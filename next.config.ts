@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.0.196"],
   output: "export", // Keeps your static HTML export active
-  basePath: "/abconstruction",
   images: {
     unoptimized: true, // Required for static export setup
     remotePatterns: [
