@@ -23,53 +23,61 @@ export default function HomePage() {
 
   useGSAP(
     () => {
-      // ==========================================
-      // 1. HERO SECTION (High-End Staggered Entrance)
-      // ==========================================
-      const heroTl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      // 1. HERO SECTION (Initial load timeline + Scroll-Scrub Parallax out)
+      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       heroTl
         .from(".hero-badge", {
           opacity: 0,
-          y: -20,
-          duration: 0.8,
+          y: -15,
+          duration: 0.6,
           delay: 0.1,
         })
         .from(
           ".hero-title-line",
           {
             opacity: 0,
-            y: 50,
-            duration: 1,
+            y: 40,
+            duration: 0.9,
             stagger: 0.15,
           },
-          "-=0.5",
+          "-=0.4",
         )
         .from(
           ".hero-subtext",
           {
             opacity: 0,
-            y: 25,
-            duration: 0.8,
-          },
-          "-=0.6",
-        )
-        .from(
-          ".hero-btn",
-          {
-            opacity: 0,
             y: 20,
-            scale: 0.96,
-            duration: 0.7,
-            stagger: 0.15,
-            ease: "back.out(1.4)", // Slight premium spring
+            duration: 0.6,
           },
           "-=0.5",
+        )
+        .fromTo(
+          "#homeCTA",
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+          },
+          "-=0.3",
         );
 
-      // ==========================================
-      // 2. STATS SECTION (Counter + Scale In)
-      // ==========================================
+      // Hero Parallax Scrub (Slowly drifts text up as you scroll down)
+      gsap.to(".hero-content", {
+        y: -60,
+        opacity: 0.3,
+        ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1, // Smooth scrub tied to scrollbar
+        },
+      });
+
+      // 2. STATS COUNTER ANIMATION (Scrub-driven counter progress)
       const statItems = gsap.utils.toArray<HTMLElement>(".stat-item");
 
       statItems.forEach((item) => {
@@ -83,12 +91,11 @@ export default function HomePage() {
 
         gsap.to(counterObj, {
           value: targetValue,
-          duration: 2,
-          ease: "power2.out",
+          ease: "none",
           scrollTrigger: {
-            trigger: item,
+            trigger: statsRef.current,
             start: "top 85%",
-            toggleActions: "play none none reverse",
+            end: "bottom 60%",
           },
           onUpdate: () => {
             if (numElement) {
@@ -98,63 +105,44 @@ export default function HomePage() {
         });
       });
 
-      gsap.from(".stat-item", {
-        opacity: 0,
-        y: 30,
-        stagger: 0.12,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: statsRef.current,
-          start: "top 85%",
-        },
-      });
-
-      // ==========================================
-      // 3. OVERVIEW SECTION (Reveal with Subtle Slide)
-      // ==========================================
+      // 3. OVERVIEW SECTION REVEAL (Scrubbed Timeline)
       const overviewTl = gsap.timeline({
         scrollTrigger: {
           trigger: overviewRef.current,
-          start: "top 75%",
-          toggleActions: "play none none reverse",
+          start: "top 85%",
+          end: "top 35%",
+          scrub: 1, // Animation progress is locked directly to scroll position
         },
       });
 
       overviewTl
         .from(".overview-badge", {
           opacity: 0,
-          x: -25,
-          duration: 0.6,
-          ease: "power2.out",
+          x: -30,
         })
         .from(
           ".overview-heading",
           {
             opacity: 0,
             y: 35,
-            duration: 0.8,
-            ease: "power3.out",
           },
-          "-=0.4",
+          "-=0.2",
         )
         .from(
           ".overview-text",
           {
             opacity: 0,
             y: 20,
-            duration: 0.7,
           },
-          "-=0.5",
+          "-=0.2",
         )
         .from(
           ".overview-link",
           {
             opacity: 0,
             x: -20,
-            duration: 0.6,
           },
-          "-=0.4",
+          "-=0.2",
         );
     },
     { scope: containerRef },
@@ -170,7 +158,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/90 to-transparent z-10" />
         <div className="absolute inset-0 opacity-15 mix-blend-overlay bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:20px_20px]" />
 
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="hero-content relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-10 space-y-4 sm:space-y-6">
             <span className="hero-badge text-amber-500 text-xs tracking-widest font-extrabold uppercase block">
               Established 1977 · New Delhi, India
@@ -186,16 +174,21 @@ export default function HomePage() {
               surface engineering across Italian marble, granite, and
               high-performance tiles for institutional and luxury spaces.
             </p>
-            <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row gap-3.5 sm:gap-4 w-full sm:w-auto">
+
+            {/* CTA Buttons */}
+            <div
+              id="homeCTA"
+              className="pt-2 sm:pt-4 flex flex-col sm:flex-row gap-3.5 sm:gap-4 w-full sm:w-auto opacity-100 pointer-events-auto z-30"
+            >
               <Link
                 href="/contact"
-                className="hero-btn w-full sm:w-auto text-center px-8 py-4 bg-amber-600 text-white text-xs font-extrabold uppercase tracking-widest hover:bg-amber-500 transition-all min-h-[48px] flex items-center justify-center rounded-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full sm:w-auto text-center px-8 py-4 bg-amber-600 text-white text-xs font-extrabold uppercase tracking-widest hover:bg-amber-500 transition-all min-h-[48px] flex items-center justify-center rounded-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-400 opacity-100 visible"
               >
                 Request Consultation
               </Link>
               <Link
                 href="/projects"
-                className="hero-btn w-full sm:w-auto text-center px-8 py-4 border border-stone-600 text-stone-200 text-xs font-extrabold uppercase tracking-widest hover:bg-stone-800 transition-colors min-h-[48px] flex items-center justify-center rounded-sm focus:outline-none focus:ring-2 focus:ring-stone-400"
+                className="w-full sm:w-auto text-center px-8 py-4 border border-stone-600 text-stone-200 text-xs font-extrabold uppercase tracking-widest hover:bg-stone-800 transition-colors min-h-[48px] flex items-center justify-center rounded-sm focus:outline-none focus:ring-2 focus:ring-stone-400 opacity-100 visible"
               >
                 View Project Matrix
               </Link>
