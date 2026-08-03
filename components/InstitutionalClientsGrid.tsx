@@ -131,30 +131,51 @@ export default function InstitutionalClientsGrid() {
     fetchPartners();
   }, []);
 
-  // Smooth Scrub: 2 Grid reveal setup
+  // Grid reveal: one-shot stagger, not scroll-scrubbed — this is a simple
+  // "arrive once" moment, not a scroll-driven story, so scrub would only
+  // make it feel laggy on a fast scroll.
   useGSAP(
     () => {
       if (loading || partners.length === 0) return;
 
-      gsap.fromTo(
-        ".client-card-anim",
-        {
-          opacity: 0,
-          y: 40,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          stagger: 0.1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 85%",
-            end: "top 30%",
-            scrub: 2, // Smooth 2s scroll scrub
+      const mm = gsap.matchMedia();
+
+      // 1. Accessibility: Instant render for users preferring reduced motion
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(".client-card-anim", { opacity: 1, y: 0, filter: "none" });
+      });
+
+      // 2. Ultra-Smooth Scrubbed Entrance
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".client-card-anim",
+          {
+            opacity: 0,
+            y: 40,
           },
-        },
-      );
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.2,
+            ease: "linear", 
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: "top 85%", //
+              end: "top 35%", //
+              scrub: 1.5,
+              markers: true,
+            },
+          },
+        );
+      });
+
+      // 3. Handle dynamic height changes after async images / signed URLs load
+      const refreshId = requestAnimationFrame(() => ScrollTrigger.refresh());
+
+      return () => {
+        cancelAnimationFrame(refreshId);
+        mm.revert(); // Automatically cleans up matchMedia, tweens, and scrollTriggers
+      };
     },
     { dependencies: [loading, partners], scope: containerRef },
   );
@@ -162,15 +183,40 @@ export default function InstitutionalClientsGrid() {
   if (loading) {
     return (
       <section className="bg-stone-950 py-12 sm:py-20 border-y border-stone-800/80 text-white font-sans">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center animate-pulse mb-10">
-          <div className="h-3 w-36 bg-stone-800 mx-auto rounded mb-3" />
-          <div className="h-8 w-64 sm:w-80 bg-stone-800 mx-auto rounded" />
+        <style jsx>{`
+          @keyframes shimmer {
+            0% {
+              background-position: -200% 0;
+            }
+            100% {
+              background-position: 200% 0;
+            }
+          }
+          .shimmer {
+            background-image: linear-gradient(
+              100deg,
+              rgba(41, 37, 36, 0.6) 30%,
+              rgba(120, 113, 108, 0.35) 50%,
+              rgba(41, 37, 36, 0.6) 70%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.6s ease-in-out infinite;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .shimmer {
+              animation: none;
+            }
+          }
+        `}</style>
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center mb-10">
+          <div className="shimmer h-3 w-36 mx-auto rounded mb-3" />
+          <div className="shimmer h-8 w-64 sm:w-80 mx-auto rounded" />
         </div>
         <div className="max-w-7xl mx-auto px-3 sm:px-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((idx) => (
             <div
               key={idx}
-              className="min-h-[220px] bg-stone-900/60 rounded-lg animate-pulse border border-stone-800"
+              className="shimmer min-h-[220px] rounded-lg border border-stone-800"
             />
           ))}
         </div>
@@ -189,6 +235,10 @@ export default function InstitutionalClientsGrid() {
         <span className="text-amber-500 text-[10px] sm:text-xs tracking-[0.25em] font-extrabold uppercase block mb-2">
           Institutional Portfolio
         </span>
+        <span
+          className="inline-block h-[2px] w-14 bg-amber-500/70 mb-4"
+          aria-hidden="true"
+        />
         <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
           Trusted Partners &amp; Clients
         </h2>
@@ -239,7 +289,7 @@ function ClientBrandCard({
             fill
             loading="lazy"
             onError={() => setHasError(true)}
-            className="object-contain p-2 filter transition-all duration-300 group-hover:scale-105"
+            className="object-contain p-2 filter transition-all duration-300 ease-out group-hover:scale-[1.04]"
             unoptimized
           />
         ) : (

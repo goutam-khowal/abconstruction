@@ -482,6 +482,9 @@ function highlightMatches(text: string, terms: string[]) {
 export default function ArchiveProjectsTable() {
   const sectionRef = useRef<HTMLElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
+  const countValue = useRef(0);
+  const prefersReducedMotion = useRef(false);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -506,57 +509,117 @@ export default function ArchiveProjectsTable() {
     });
   }, [searchTerms, selectedCategory]);
 
-  // Section Scrub: 2 Entrance setup
+  // One-shot entrance for the header and table shell. This is a simple
+  // "arrive once" reveal, not a scroll-driven story, so a plain
+  // toggleActions trigger reads better than scrubbing it to scroll speed.
   useGSAP(
     () => {
-      gsap.fromTo(
-        ".archive-header-box",
-        { opacity: 0, y: 35 },
-        {
-          opacity: 1,
-          y: 0,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 85%",
-            end: "top 55%",
-            scrub: 2,
-          },
-        },
-      );
+      const mm = gsap.matchMedia();
 
-      gsap.fromTo(
-        ".archive-table-container",
-        { opacity: 0, y: 40 },
-        {
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        prefersReducedMotion.current = true;
+        gsap.set([".archive-header-box", ".archive-table-container"], {
           opacity: 1,
           y: 0,
-          scrollTrigger: {
-            trigger: ".archive-table-container",
-            start: "top 90%",
-            end: "top 60%",
-            scrub: 2,
+        });
+      });
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        prefersReducedMotion.current = false;
+
+        gsap.fromTo(
+          ".archive-header-box",
+          { opacity: 0, y: 28 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
           },
-        },
-      );
+        );
+
+        gsap.fromTo(
+          ".archive-table-container",
+          { opacity: 0, y: 32 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".archive-table-container",
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+
+      return () => mm.revert();
     },
     { scope: sectionRef },
   );
 
-  // Stagger animate rows when searching/filtering
-  useEffect(() => {
-    if (!tableBodyRef.current) return;
+  // Row stagger on search/filter changes — a single source of truth for
+  // this animation (rather than a second, competing effect) so it never
+  // races the entrance tween above.
+  const { contextSafe } = useGSAP({ scope: sectionRef });
 
+  const animateRows = contextSafe(() => {
+    if (!tableBodyRef.current) return;
+    const rows = tableBodyRef.current.querySelectorAll("tr");
+    if (prefersReducedMotion.current) {
+      gsap.set(rows, { opacity: 1, y: 0 });
+      return;
+    }
     gsap.fromTo(
-      tableBodyRef.current.querySelectorAll("tr"),
-      { opacity: 0, y: 8 },
+      rows,
+      { opacity: 0, y: 10 },
       {
         opacity: 1,
         y: 0,
-        duration: 0.3,
+        duration: 0.35,
         stagger: 0.02,
         ease: "power2.out",
       },
     );
+  });
+
+  useEffect(() => {
+    animateRows();
+  }, [filteredProjects, animateRows]);
+
+  // Animate the result count as a number tween on a ref, so rapid typing
+  // doesn't fight React's render cycle with dozens of state updates.
+  useEffect(() => {
+    const target = filteredProjects.length;
+    if (prefersReducedMotion.current || !countRef.current) {
+      countValue.current = target;
+      if (countRef.current) countRef.current.textContent = String(target);
+      return;
+    }
+    const obj = { val: countValue.current };
+    const tween = gsap.to(obj, {
+      val: target,
+      duration: 0.4,
+      ease: "power2.out",
+      onUpdate: () => {
+        if (countRef.current) {
+          countRef.current.textContent = String(Math.round(obj.val));
+        }
+      },
+      onComplete: () => {
+        countValue.current = target;
+      },
+    });
+    return () => {
+      tween.kill();
+    };
   }, [filteredProjects]);
 
   return (
@@ -570,6 +633,10 @@ export default function ArchiveProjectsTable() {
           <span className="text-brand-blue text-[10px] tracking-[0.3em] font-black uppercase block mb-1">
             Historic Deliveries Registry
           </span>
+          <span
+            className="block h-[2px] w-14 bg-brand-blue/70 mb-3"
+            aria-hidden="true"
+          />
           <h2 className="text-2xl sm:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">
             Comprehensive Project Archive
           </h2>
@@ -587,14 +654,14 @@ export default function ArchiveProjectsTable() {
               placeholder="Search Project / Location / Sector..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 pr-8 bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue rounded-none shadow-sm min-w-[240px]"
+              className="px-4 py-2 pr-8 bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue rounded-none shadow-sm min-w-[240px] transition-colors duration-200"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
                 aria-label="Clear search"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-sm font-bold"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-sm font-bold transition-colors duration-150"
               >
                 ×
               </button>
@@ -603,7 +670,7 @@ export default function ArchiveProjectsTable() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 bg-white border border-slate-300 text-xs font-bold uppercase text-slate-800 focus:outline-none focus:border-brand-blue rounded-none shadow-sm cursor-pointer"
+            className="px-4 py-2 bg-white border border-slate-300 text-xs font-bold uppercase text-slate-800 focus:outline-none focus:border-brand-blue rounded-none shadow-sm cursor-pointer transition-colors duration-200"
           >
             <option value="ALL">All Sectors</option>
             <option value="Government/Embassy">Govt & Embassy</option>
@@ -616,8 +683,9 @@ export default function ArchiveProjectsTable() {
       </div>
 
       {/* Result count */}
-      <div className="mb-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-        {filteredProjects.length} of {completedProjectsData.length} records
+      <div className="mb-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider tabular-nums">
+        <span ref={countRef}>{filteredProjects.length}</span> of{" "}
+        {completedProjectsData.length} records
       </div>
 
       {/* Table Container */}
@@ -641,9 +709,16 @@ export default function ArchiveProjectsTable() {
                 filteredProjects.map((p, index) => (
                   <tr
                     key={p.id}
-                    className="hover:bg-blue-50/50 transition-colors duration-200"
+                    className="group relative hover:bg-blue-50/50 transition-colors duration-200"
                   >
-                    <td className="py-3.5 px-6 text-center text-slate-400 font-mono text-[11px]">
+                    <td className="py-3.5 px-6 text-center text-slate-400 font-mono text-[11px] relative">
+                      {/* Ledger-highlight accent: a thin bar that grows in
+                          on hover, echoing the eyebrow rule motif used
+                          elsewhere on the page. */}
+                      <span
+                        className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] bg-brand-blue scale-y-0 group-hover:scale-y-100 origin-center transition-transform duration-200"
+                        aria-hidden="true"
+                      />
                       {String(index + 1).padStart(2, "0")}
                     </td>
                     <td className="py-3.5 px-6 font-extrabold text-slate-900 uppercase">

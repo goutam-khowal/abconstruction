@@ -15,39 +15,71 @@ export default function ProjectsPage() {
 
   useGSAP(
     () => {
-      // Entrance Animation
-      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const mm = gsap.matchMedia();
 
-      heroTl
-        .from(".projects-hero-badge", {
-          opacity: 0,
-          y: -15,
-          duration: 0.6,
-          delay: 0.1,
-        })
-        .from(
-          ".projects-hero-title-line",
-          {
-            opacity: 0,
-            y: 35,
-            duration: 0.8,
-            stagger: 0.15,
-          },
-          "-=0.4",
+      // Reduced motion: settle everything into its final state instantly.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(
+          [
+            ".projects-hero-badge",
+            ".projects-hero-badge-rule",
+            ".projects-hero-title-line",
+          ],
+          { opacity: 1, y: 0, clearProps: "filter" },
         );
-
-      // Smooth Scrub: 2 Parallax Shift
-      gsap.to(".projects-hero-content", {
-        y: -50,
-        opacity: 0.2,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 2, // Smooth 2s scroll scrub
-        },
       });
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        heroTl
+          .from(".projects-hero-badge", {
+            opacity: 0,
+            y: -12,
+            duration: 0.6,
+            delay: 0.1,
+          })
+          // Signature move: a thin rule revealing left-to-right, like a
+          // chisel stroke opening the page — reused as the motif across
+          // every section eyebrow on this site.
+          .fromTo(
+            ".projects-hero-badge-rule",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.5, ease: "power2.out" },
+            "-=0.25",
+          )
+          .from(
+            ".projects-hero-title-line",
+            {
+              opacity: 0,
+              y: 32,
+              filter: "blur(6px)",
+              duration: 0.9,
+              stagger: 0.15,
+              ease: "expo.out",
+            },
+            "-=0.3",
+          );
+
+        // Parallax drift: background content drifts and softens as the
+        // hero scrolls away, but never fades past legibility while any
+        // part of the hero is still on screen.
+        gsap.to(".projects-hero-content", {
+          y: -50,
+          opacity: 0.35,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1.2,
+          },
+        });
+
+        return () => heroTl.kill();
+      });
+
+      return () => mm.revert();
     },
     { scope: containerRef },
   );
@@ -64,6 +96,10 @@ export default function ProjectsPage() {
           <span className="projects-hero-badge text-amber-500 text-xs tracking-widest uppercase font-extrabold block mb-2">
             Portfolio Registry
           </span>
+          <span
+            className="projects-hero-badge-rule block h-[2px] w-14 bg-amber-500/70 origin-left mb-4"
+            aria-hidden="true"
+          />
           <h1 className="text-3xl sm:text-5xl font-light tracking-tight text-white uppercase leading-tight">
             <span className="projects-hero-title-line block">
               Where Craftsmanship
