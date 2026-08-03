@@ -23,37 +23,53 @@ export default function HomePage() {
 
   useGSAP(
     () => {
-      // 1. HERO SECTION (Excluded callback button from entrance sequence)
-      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      // ==========================================
+      // 1. HERO SECTION (High-End Staggered Entrance)
+      // ==========================================
+      const heroTl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
       heroTl
         .from(".hero-badge", {
           opacity: 0,
-          y: -15,
-          duration: 0.6,
+          y: -20,
+          duration: 0.8,
           delay: 0.1,
         })
         .from(
           ".hero-title-line",
           {
             opacity: 0,
-            y: 40,
-            duration: 0.9,
+            y: 50,
+            duration: 1,
             stagger: 0.15,
           },
-          "-=0.4",
+          "-=0.5",
         )
         .from(
           ".hero-subtext",
           {
             opacity: 0,
+            y: 25,
+            duration: 0.8,
+          },
+          "-=0.6",
+        )
+        .from(
+          ".hero-btn",
+          {
+            opacity: 0,
             y: 20,
-            duration: 0.6,
+            scale: 0.96,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: "back.out(1.4)", // Slight premium spring
           },
           "-=0.5",
         );
 
-      // 2. STATS COUNTER ANIMATION
+      // ==========================================
+      // 2. STATS SECTION (Counter + Scale In)
+      // ==========================================
       const statItems = gsap.utils.toArray<HTMLElement>(".stat-item");
 
       statItems.forEach((item) => {
@@ -67,7 +83,7 @@ export default function HomePage() {
 
         gsap.to(counterObj, {
           value: targetValue,
-          duration: 1.8,
+          duration: 2,
           ease: "power2.out",
           scrollTrigger: {
             trigger: item,
@@ -82,7 +98,21 @@ export default function HomePage() {
         });
       });
 
-      // 3. OVERVIEW SECTION REVEAL
+      gsap.from(".stat-item", {
+        opacity: 0,
+        y: 30,
+        stagger: 0.12,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: statsRef.current,
+          start: "top 85%",
+        },
+      });
+
+      // ==========================================
+      // 3. OVERVIEW SECTION (Reveal with Subtle Slide)
+      // ==========================================
       const overviewTl = gsap.timeline({
         scrollTrigger: {
           trigger: overviewRef.current,
@@ -94,8 +124,8 @@ export default function HomePage() {
       overviewTl
         .from(".overview-badge", {
           opacity: 0,
-          x: -30,
-          duration: 0.5,
+          x: -25,
+          duration: 0.6,
           ease: "power2.out",
         })
         .from(
@@ -106,14 +136,14 @@ export default function HomePage() {
             duration: 0.8,
             ease: "power3.out",
           },
-          "-=0.3",
+          "-=0.4",
         )
         .from(
           ".overview-text",
           {
             opacity: 0,
             y: 20,
-            duration: 0.6,
+            duration: 0.7,
           },
           "-=0.5",
         )
@@ -122,9 +152,9 @@ export default function HomePage() {
           {
             opacity: 0,
             x: -20,
-            duration: 0.5,
+            duration: 0.6,
           },
-          "-=0.3",
+          "-=0.4",
         );
     },
     { scope: containerRef },
@@ -157,16 +187,15 @@ export default function HomePage() {
               high-performance tiles for institutional and luxury spaces.
             </p>
             <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row gap-3.5 sm:gap-4 w-full sm:w-auto">
-              {/* Static CTA Button (Loads immediately without animation delay) */}
               <Link
                 href="/contact"
-                className="w-full sm:w-auto text-center px-8 py-4 bg-amber-600 text-white text-xs font-extrabold uppercase tracking-widest hover:bg-amber-500 transition-all min-h-[48px] flex items-center justify-center rounded-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="hero-btn w-full sm:w-auto text-center px-8 py-4 bg-amber-600 text-white text-xs font-extrabold uppercase tracking-widest hover:bg-amber-500 transition-all min-h-[48px] flex items-center justify-center rounded-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
                 Request Consultation
               </Link>
               <Link
                 href="/projects"
-                className="w-full sm:w-auto text-center px-8 py-4 border border-stone-600 text-stone-200 text-xs font-extrabold uppercase tracking-widest hover:bg-stone-800 transition-colors min-h-[48px] flex items-center justify-center rounded-sm focus:outline-none focus:ring-2 focus:ring-stone-400"
+                className="hero-btn w-full sm:w-auto text-center px-8 py-4 border border-stone-600 text-stone-200 text-xs font-extrabold uppercase tracking-widest hover:bg-stone-800 transition-colors min-h-[48px] flex items-center justify-center rounded-sm focus:outline-none focus:ring-2 focus:ring-stone-400"
               >
                 View Project Matrix
               </Link>
