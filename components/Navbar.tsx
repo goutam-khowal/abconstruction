@@ -48,96 +48,112 @@ export default function Navbar() {
     };
   }, [isDrawerOpen]);
 
-  // Initial load entrance animations & Mobile Drawer Timeline Setup
+  // GSAP Animation Start: Initial Entrance & Mobile Drawer Setup
   useGSAP(
     () => {
-      // 1. Desktop Initial Load Entrance Sequence
-      const introTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const mm = gsap.matchMedia();
 
-      introTl
-        .from(headerRef.current, {
-          yPercent: -100,
-          duration: 0.8,
-        })
-        .from(
-          logoRef.current,
-          {
-            opacity: 0,
-            x: -30,
-            duration: 0.5,
-          },
-          "-=0.4",
-        )
-        .from(
-          ".desktop-nav-item",
-          {
-            opacity: 0,
-            y: -15,
-            duration: 0.4,
-            stagger: 0.08,
-          },
-          "-=0.3",
-        )
-        .from(
-          desktopCtaRef.current,
-          {
-            opacity: 0,
-            scale: 0.85,
-            duration: 0.4,
-          },
-          "-=0.2",
-        )
-        .from(
-          mobileToggleButtonRef.current,
-          {
-            opacity: 0,
-            scale: 0.8,
-            duration: 0.4,
-          },
-          "-=0.5",
+      // Fallback for prefers-reduced-motion
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(
+          [
+            headerRef.current,
+            logoRef.current,
+            ".desktop-nav-item",
+            desktopCtaRef.current,
+            mobileToggleButtonRef.current,
+          ],
+          { opacity: 1, y: 0, x: 0, scale: 1 },
         );
+      });
 
-      // 2. Mobile Drawer Sequence (Paused by default, controlled via toggle)
-      drawerTl.current = gsap
-        .timeline({ paused: true })
-        .to(mobileDrawerOverlayRef.current, {
-          autoAlpha: 1,
-          duration: 0.3,
-          ease: "power2.out",
-        })
-        .to(
-          mobileDrawerRef.current,
-          {
-            x: "0%",
-            duration: 0.4,
-            ease: "power3.out",
-          },
-          "-=0.2",
-        )
-        .from(
-          ".mobile-nav-item",
-          {
-            opacity: 0,
-            x: 30,
-            duration: 0.3,
-            stagger: 0.06,
-            ease: "power2.out",
-          },
-          "-=0.2",
-        )
-        .from(
-          ".mobile-cta-btn",
-          {
-            opacity: 0,
-            y: 20,
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // 1. Desktop Initial Load Entrance Sequence
+        const introTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        introTl
+          .fromTo(
+            headerRef.current,
+            { yPercent: -100 },
+            { yPercent: 0, duration: 0.8 },
+          )
+          .fromTo(
+            logoRef.current,
+            { opacity: 0, x: -30 },
+            { opacity: 1, x: 0, duration: 0.5 },
+            "-=0.4",
+          )
+          .fromTo(
+            ".desktop-nav-item",
+            { opacity: 0, y: -15 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              stagger: 0.08,
+            },
+            "-=0.3",
+          )
+          .fromTo(
+            desktopCtaRef.current,
+            { opacity: 0, scale: 0.85 },
+            { opacity: 1, scale: 1, duration: 0.4 },
+            "-=0.2",
+          )
+          .fromTo(
+            mobileToggleButtonRef.current,
+            { opacity: 0, scale: 0.8 },
+            { opacity: 1, scale: 1, duration: 0.4 },
+            "-=0.5",
+          );
+
+        // 2. Mobile Drawer Sequence
+        drawerTl.current = gsap
+          .timeline({ paused: true })
+          .to(mobileDrawerOverlayRef.current, {
+            autoAlpha: 1,
             duration: 0.3,
             ease: "power2.out",
-          },
-          "-=0.1",
-        );
+          })
+          .to(
+            mobileDrawerRef.current,
+            {
+              x: "0%",
+              duration: 0.5,
+              ease: "back.out(0.8)",
+            },
+            "-=0.2",
+          )
+          .fromTo(
+            ".mobile-nav-item",
+            { opacity: 0, x: 30 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.35,
+              stagger: 0.06,
+              ease: "power2.out",
+            },
+            "-=0.25",
+          )
+          .fromTo(
+            ".mobile-cta-btn",
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.3,
+              ease: "power2.out",
+            },
+            "-=0.1",
+          );
+      });
+
+      return () => mm.revert();
     },
     { scope: containerRef },
   );
+  // GSAP Animation End: Initial Entrance & Mobile Drawer Setup
 
   // Trigger Mobile Drawer Animation on state toggle
   useEffect(() => {
@@ -148,6 +164,40 @@ export default function Navbar() {
       drawerTl.current.reverse();
     }
   }, [isDrawerOpen]);
+
+  // GSAP Animation Start: Magnetic Button Interactive Hover Effect
+  const { contextSafe } = useGSAP({ scope: containerRef });
+
+  const handleMagneticMove = contextSafe(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (
+        !desktopCtaRef.current ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      )
+        return;
+      const rect = desktopCtaRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+
+      gsap.to(desktopCtaRef.current, {
+        x: x * 0.25,
+        y: y * 0.25,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    },
+  );
+
+  const handleMagneticLeave = contextSafe(() => {
+    if (!desktopCtaRef.current) return;
+    gsap.to(desktopCtaRef.current, {
+      x: 0,
+      y: 0,
+      duration: 0.5,
+      ease: "elastic.out(1, 0.4)",
+    });
+  });
+  // GSAP Animation End: Magnetic Button Interactive Hover Effect
 
   return (
     <div ref={containerRef}>
@@ -215,7 +265,12 @@ export default function Navbar() {
               })}
           </nav>
 
-          <div ref={desktopCtaRef} className="hidden md:block">
+          <div
+            ref={desktopCtaRef}
+            onMouseMove={handleMagneticMove}
+            onMouseLeave={handleMagneticLeave}
+            className="hidden md:block transform-gpu"
+          >
             <Link
               href="/contact"
               className="text-xs tracking-widest font-extrabold uppercase px-6 py-3 bg-amber-600 text-white hover:bg-stone-900 border border-amber-600 hover:border-amber-500 transition-all shadow-md inline-flex items-center justify-center min-h-[48px] rounded-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
