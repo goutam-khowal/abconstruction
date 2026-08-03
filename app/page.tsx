@@ -19,9 +19,19 @@ export default function HomePage() {
 
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-10 space-y-4 sm:space-y-6">
-            <span className="text-amber-500 text-xs tracking-widest font-extrabold uppercase block">
-              Established 1977 · New Delhi, India
-            </span>
+            <div className="hero-badge-container flex flex-wrap items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-500">
+              <span>Established 1977 · New Delhi</span>
+              <span className="text-stone-500 hidden sm:inline">•</span>
+              <span className="text-stone-300 font-semibold tracking-wider">
+                Formerly GANGA RAM &amp; Sons
+              </span>
+            </div>
+
+            {/* Signature Rule Bar */}
+            <span
+              className="hero-badge-rule block h-[2px] w-14 bg-amber-500/70 origin-left"
+              aria-hidden="true"
+            />
             <h1 className="font-display font-light text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight uppercase leading-tight sm:leading-none">
               Timeless Elegance, <br />
               <span className="font-extrabold text-amber-500 block mt-1">

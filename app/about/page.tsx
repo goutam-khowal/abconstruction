@@ -27,13 +27,24 @@ export default function CompanyProfilePage() {
     <div className="bg-stone-50 text-stone-900 font-sans">
       <section className="relative min-h-[40vh] sm:min-h-[45vh] flex items-center bg-stone-900 text-white pt-28 sm:pt-32 pb-12 sm:pb-16">
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/80 to-transparent z-10" />
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full">
-          <span className="text-amber-500 text-xs tracking-widest uppercase font-extrabold block mb-2">
-            Established 1977
-          </span>
+        <div className="about-hero-content relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full">
+          <div className="about-hero-badge flex items-center gap-2 mb-2">
+            <span className="text-amber-500 text-xs tracking-widest uppercase font-extrabold">
+              Established 1977
+            </span>
+            <span className="text-stone-400 text-xs font-semibold uppercase">
+              • Formerly GANGA RAM &amp; Sons
+            </span>
+          </div>
+          <span
+            className="about-hero-rule block h-[2px] w-14 bg-amber-500/70 origin-left mb-4"
+            aria-hidden="true"
+          />
           <h1 className="text-3xl sm:text-5xl font-light tracking-tight uppercase leading-tight max-w-3xl">
-            A Four-Decade Legacy in <br />
-            <span className="font-extrabold text-amber-500">
+            <span className="about-hero-title-line block">
+              A Four-Decade Legacy in
+            </span>
+            <span className="about-hero-title-line font-extrabold text-amber-500 block">
               Marble &amp; Stone Work
             </span>
           </h1>
@@ -52,7 +63,10 @@ export default function CompanyProfilePage() {
           </div>
           <div className="lg:col-span-7">
             <p className="text-stone-600 text-sm sm:text-base leading-relaxed font-medium">
-              Since 1977, A&amp;B Construction has executed high-spec surface
+              Founded in 1977{" "}
+              <strong className="text-stone-900">A&amp;B Construction</strong>{" "}
+              (previously known as as <strong>Ganga Ram &amp; Sons</strong>) has
+              built a multi-generational legacy executing high-spec surface
               installations across commercial complexes, government embassies,
               educational institutes, and luxury private residences across
               India.
