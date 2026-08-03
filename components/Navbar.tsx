@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const navigationMap = [
   { label: "Home", path: "/" },
@@ -14,6 +19,18 @@ const navigationMap = [
 ];
 
 export default function Navbar() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const logoRef = useRef<HTMLAnchorElement>(null);
+  const desktopNavRef = useRef<HTMLElement>(null);
+  const desktopCtaRef = useRef<HTMLDivElement>(null);
+  const mobileToggleButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileDrawerOverlayRef = useRef<HTMLDivElement>(null);
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
+
+  // Reference to hold mobile drawer animation timeline
+  const drawerTl = useRef<gsap.core.Timeline | null>(null);
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const currentPath = usePathname();
@@ -25,19 +42,117 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (isDrawerOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = isDrawerOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isDrawerOpen]);
 
+  // Initial load entrance animations & Mobile Drawer Timeline Setup
+  useGSAP(
+    () => {
+      // 1. Desktop Initial Load Entrance Sequence
+      const introTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      introTl
+        .from(headerRef.current, {
+          yPercent: -100,
+          duration: 0.8,
+        })
+        .from(
+          logoRef.current,
+          {
+            opacity: 0,
+            x: -30,
+            duration: 0.5,
+          },
+          "-=0.4",
+        )
+        .from(
+          ".desktop-nav-item",
+          {
+            opacity: 0,
+            y: -15,
+            duration: 0.4,
+            stagger: 0.08,
+          },
+          "-=0.3",
+        )
+        .from(
+          desktopCtaRef.current,
+          {
+            opacity: 0,
+            scale: 0.85,
+            duration: 0.4,
+          },
+          "-=0.2",
+        )
+        .from(
+          mobileToggleButtonRef.current,
+          {
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.4,
+          },
+          "-=0.5",
+        );
+
+      // 2. Mobile Drawer Sequence (Paused by default, controlled via toggle)
+      drawerTl.current = gsap
+        .timeline({ paused: true })
+        .to(mobileDrawerOverlayRef.current, {
+          autoAlpha: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        })
+        .to(
+          mobileDrawerRef.current,
+          {
+            x: "0%",
+            duration: 0.4,
+            ease: "power3.out",
+          },
+          "-=0.2",
+        )
+        .from(
+          ".mobile-nav-item",
+          {
+            opacity: 0,
+            x: 30,
+            duration: 0.3,
+            stagger: 0.06,
+            ease: "power2.out",
+          },
+          "-=0.2",
+        )
+        .from(
+          ".mobile-cta-btn",
+          {
+            opacity: 0,
+            y: 20,
+            duration: 0.3,
+            ease: "power2.out",
+          },
+          "-=0.1",
+        );
+    },
+    { scope: containerRef },
+  );
+
+  // Trigger Mobile Drawer Animation on state toggle
+  useEffect(() => {
+    if (!drawerTl.current) return;
+    if (isDrawerOpen) {
+      drawerTl.current.play();
+    } else {
+      drawerTl.current.reverse();
+    }
+  }, [isDrawerOpen]);
+
   return (
-    <>
+    <div ref={containerRef}>
       <header
+        ref={headerRef}
         className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${
           isScrolled
             ? "bg-stone-900/95 backdrop-blur-md border-b border-stone-800 py-3 shadow-xl text-white"
@@ -46,6 +161,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between">
           <Link
+            ref={logoRef}
             href="/"
             className="flex items-center gap-3 group min-h-[48px] focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-sm p-1"
           >
@@ -71,7 +187,10 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-10">
+          <nav
+            ref={desktopNavRef}
+            className="hidden md:flex items-center space-x-6 lg:space-x-10"
+          >
             {navigationMap
               .filter((node) => node.path !== "/")
               .map((node) => {
@@ -80,7 +199,7 @@ export default function Navbar() {
                   <Link
                     key={node.path}
                     href={node.path}
-                    className={`text-xs tracking-wider font-bold uppercase transition-colors relative py-2 min-h-[44px] flex items-center focus:outline-none focus:text-amber-500 ${
+                    className={`desktop-nav-item text-xs tracking-wider font-bold uppercase transition-colors relative py-2 min-h-[44px] flex items-center focus:outline-none focus:text-amber-500 ${
                       isScrolled
                         ? isTargetActive
                           ? "text-amber-400 font-extrabold border-b-2 border-amber-400"
@@ -96,7 +215,7 @@ export default function Navbar() {
               })}
           </nav>
 
-          <div className="hidden md:block">
+          <div ref={desktopCtaRef} className="hidden md:block">
             <Link
               href="/contact"
               className="text-xs tracking-widest font-extrabold uppercase px-6 py-3 bg-amber-600 text-white hover:bg-stone-900 border border-amber-600 hover:border-amber-500 transition-all shadow-md inline-flex items-center justify-center min-h-[48px] rounded-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -109,8 +228,9 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Touch-Friendly Mobile Toggle */}
+      {/* Touch-Friendly Mobile Toggle Button */}
       <button
+        ref={mobileToggleButtonRef}
         onClick={() => setIsDrawerOpen(!isDrawerOpen)}
         className={`fixed top-3.5 right-4 md:hidden px-3 py-2 transition-colors z-[120] rounded-sm min-w-[48px] min-h-[48px] flex items-center justify-center gap-2 border ${
           isDrawerOpen
@@ -141,21 +261,17 @@ export default function Navbar() {
         </div>
       </button>
 
-      {/* Drawer Overlay */}
+      {/* Mobile Drawer Overlay */}
       <div
+        ref={mobileDrawerOverlayRef}
         onClick={() => setIsDrawerOpen(false)}
-        className={`fixed inset-0 bg-stone-950/80 transition-all duration-300 md:hidden z-[90] ${
-          isDrawerOpen
-            ? "opacity-100 visible backdrop-blur-sm"
-            : "opacity-0 invisible pointer-events-none"
-        }`}
+        className="fixed inset-0 bg-stone-950/80 backdrop-blur-sm md:hidden z-[90] opacity-0 invisible"
       />
 
-      {/* Drawer Content */}
+      {/* Mobile Drawer Content */}
       <div
-        className={`fixed inset-y-0 right-0 w-[85%] max-w-sm bg-stone-900 p-6 pt-24 pb-12 z-[100] transition-transform duration-300 ease-out flex flex-col justify-between text-white md:hidden border-l border-stone-800 ${
-          isDrawerOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        ref={mobileDrawerRef}
+        className="fixed inset-y-0 right-0 w-[85%] max-w-sm bg-stone-900 p-6 pt-24 pb-12 z-[100] translate-x-full flex flex-col justify-between text-white md:hidden border-l border-stone-800"
       >
         <div className="flex flex-col space-y-3">
           {navigationMap.map((node) => {
@@ -165,7 +281,7 @@ export default function Navbar() {
                 key={node.path}
                 href={node.path}
                 onClick={() => setIsDrawerOpen(false)}
-                className={`text-base font-bold uppercase tracking-wider py-3.5 px-4 rounded-sm transition-colors min-h-[48px] flex items-center ${
+                className={`mobile-nav-item text-base font-bold uppercase tracking-wider py-3.5 px-4 rounded-sm transition-colors min-h-[48px] flex items-center ${
                   isTargetActive
                     ? "bg-stone-800 text-amber-400 border-l-4 border-amber-500"
                     : "text-stone-300 hover:text-amber-400 hover:bg-stone-800/50"
@@ -181,7 +297,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             onClick={() => setIsDrawerOpen(false)}
-            className="w-full text-center text-xs tracking-widest font-extrabold bg-amber-600 text-white uppercase py-4 shadow-xl min-h-[50px] flex items-center justify-center rounded-sm hover:bg-amber-500"
+            className="mobile-cta-btn w-full text-center text-xs tracking-widest font-extrabold bg-amber-600 text-white uppercase py-4 shadow-xl min-h-[50px] flex items-center justify-center rounded-sm hover:bg-amber-500"
           >
             Contact Us Today
           </Link>
@@ -190,6 +306,6 @@ export default function Navbar() {
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }
