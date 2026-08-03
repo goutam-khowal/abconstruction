@@ -11,7 +11,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const stats = [
   { numericValue: 40, suffix: "+", label: "Years In Business" },
   { numericValue: 5, suffix: "k+", label: "Happy Clients" },
-  { numericValue: 10, suffix: "M+", label: "Sq. Ft. Marble & Stone Work" },
+  { numericValue: 10, suffix: "M+", label: "Sq. Ft. Covered with Excellence" },
   { numericValue: 1, suffix: "k+", label: "Completed Projects" },
 ];
 
@@ -21,132 +21,161 @@ export default function HomePage() {
   const statsRef = useRef<HTMLElement>(null);
   const overviewRef = useRef<HTMLElement>(null);
 
+  // GSAP Animation Start: Hero Reveal & Parallax
   useGSAP(
     () => {
-      // 1. HERO SECTION (Initial load timeline + Scroll-Scrub Parallax out)
-      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const mm = gsap.matchMedia();
 
-      heroTl
-        .from(".hero-badge", {
-          opacity: 0,
-          y: -15,
-          duration: 0.6,
-          delay: 0.1,
-        })
-        .from(
-          ".hero-title-line",
-          {
-            opacity: 0,
-            y: 40,
-            duration: 0.9,
-            stagger: 0.15,
-          },
-          "-=0.4",
-        )
-        .from(
-          ".hero-subtext",
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-          },
-          "-=0.5",
-        )
-        .fromTo(
-          "#homeCTA",
-          { opacity: 0, y: 15 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.3",
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(
+          [
+            ".hero-badge-container",
+            ".hero-badge-rule",
+            ".hero-title-line",
+            ".hero-subtext",
+            "#homeCTA",
+            ".stat-item",
+            ".overview-badge",
+            ".overview-heading",
+            ".overview-text",
+            ".overview-link",
+          ],
+          { opacity: 1, y: 0, x: 0, scaleX: 1, clearProps: "filter,clipPath" },
         );
-
-      // Hero Parallax Scrub (Slowly drifts text up as you scroll down)
-      gsap.to(".hero-content", {
-        y: -60,
-        opacity: 0.3,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1, // Smooth scrub tied to scrollbar
-        },
       });
 
-      // 2. STATS COUNTER ANIMATION (Scrub-driven counter progress)
-      const statItems = gsap.utils.toArray<HTMLElement>(".stat-item");
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // 1. HERO SECTION ENTRANCE
+        const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      statItems.forEach((item) => {
-        const numElement = item.querySelector(".stat-number");
-        const targetValue = parseInt(
-          numElement?.getAttribute("data-value") || "0",
-          10,
-        );
+        heroTl
+          .fromTo(
+            ".hero-badge-container",
+            { opacity: 0, y: -12 },
+            { opacity: 1, y: 0, duration: 0.6, delay: 0.1 },
+          )
+          .fromTo(
+            ".hero-badge-rule",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.6, ease: "expo.out" },
+            "-=0.3",
+          )
+          .fromTo(
+            ".hero-title-line",
+            {
+              opacity: 0,
+              y: 40,
+              filter: "blur(8px)",
+              clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
+            },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+              duration: 0.9,
+              stagger: 0.15,
+              ease: "expo.out",
+            },
+            "-=0.3",
+          )
+          .fromTo(
+            ".hero-subtext",
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.6 },
+            "-=0.4",
+          )
+          .fromTo(
+            "#homeCTA",
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.3",
+          );
 
-        const counterObj = { value: 0 };
-
-        gsap.to(counterObj, {
-          value: targetValue,
+        // Hero Parallax Scrub (Drifts text up on scroll)
+        gsap.to(".hero-content", {
+          y: -60,
+          opacity: 0.3,
           ease: "none",
           scrollTrigger: {
-            trigger: statsRef.current,
-            start: "top 85%",
-            end: "bottom 60%",
-          },
-          onUpdate: () => {
-            if (numElement) {
-              numElement.textContent = Math.floor(counterObj.value).toString();
-            }
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
           },
         });
+
+        // 2. STATS COUNTER ANIMATION
+        const statItems = gsap.utils.toArray<HTMLElement>(".stat-item");
+
+        statItems.forEach((item) => {
+          const numElement = item.querySelector(".stat-number");
+          const targetValue = parseInt(
+            numElement?.getAttribute("data-value") || "0",
+            10,
+          );
+
+          const counterObj = { value: 0 };
+
+          gsap.to(counterObj, {
+            value: targetValue,
+            ease: "none",
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: "top 85%",
+              end: "bottom 60%",
+            },
+            onUpdate: () => {
+              if (numElement) {
+                numElement.textContent = Math.floor(
+                  counterObj.value,
+                ).toString();
+              }
+            },
+          });
+        });
+
+        // 3. OVERVIEW SECTION REVEAL
+        const overviewTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: overviewRef.current,
+            start: "top 85%",
+            end: "top 35%",
+            scrub: 1,
+          },
+        });
+
+        overviewTl
+          .fromTo(
+            ".overview-badge",
+            { opacity: 0, x: -30 },
+            { opacity: 1, x: 0 },
+          )
+          .fromTo(
+            ".overview-heading",
+            { opacity: 0, y: 35 },
+            { opacity: 1, y: 0 },
+            "-=0.2",
+          )
+          .fromTo(
+            ".overview-text",
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0 },
+            "-=0.2",
+          )
+          .fromTo(
+            ".overview-link",
+            { opacity: 0, x: -20 },
+            { opacity: 1, x: 0 },
+            "-=0.2",
+          );
       });
 
-      // 3. OVERVIEW SECTION REVEAL (Scrubbed Timeline)
-      const overviewTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: overviewRef.current,
-          start: "top 85%",
-          end: "top 35%",
-          scrub: 1, // Animation progress is locked directly to scroll position
-        },
-      });
-
-      overviewTl
-        .from(".overview-badge", {
-          opacity: 0,
-          x: -30,
-        })
-        .from(
-          ".overview-heading",
-          {
-            opacity: 0,
-            y: 35,
-          },
-          "-=0.2",
-        )
-        .from(
-          ".overview-text",
-          {
-            opacity: 0,
-            y: 20,
-          },
-          "-=0.2",
-        )
-        .from(
-          ".overview-link",
-          {
-            opacity: 0,
-            x: -20,
-          },
-          "-=0.2",
-        );
+      return () => mm.revert();
     },
     { scope: containerRef },
   );
+  // GSAP Animation End: Hero Reveal & Parallax
 
   return (
     <div ref={containerRef} className="bg-stone-50 text-stone-900 font-sans">
@@ -160,9 +189,21 @@ export default function HomePage() {
 
         <div className="hero-content relative z-20 max-w-7xl mx-auto px-4 sm:px-8 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-10 space-y-4 sm:space-y-6">
-            <span className="hero-badge text-amber-500 text-xs tracking-widest font-extrabold uppercase block">
-              Established 1977 · New Delhi, India
-            </span>
+            {/* Integrated Dual Heritage Badge */}
+            <div className="hero-badge-container flex flex-wrap items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-500">
+              <span>Established 1977 · New Delhi</span>
+              <span className="text-stone-500 hidden sm:inline">•</span>
+              <span className="text-stone-300 font-semibold tracking-wider">
+                Formerly GANGA RAM &amp; Sons
+              </span>
+            </div>
+
+            {/* Signature Rule Bar */}
+            <span
+              className="hero-badge-rule block h-[2px] w-14 bg-amber-500/70 origin-left"
+              aria-hidden="true"
+            />
+
             <h1 className="font-display font-light text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight uppercase leading-tight sm:leading-none">
               <span className="hero-title-line block">Timeless Elegance,</span>
               <span className="hero-title-line font-extrabold text-amber-500 block mt-1">
@@ -230,10 +271,10 @@ export default function HomePage() {
               Decades of Craftsmanship in Premium Stone Architecture
             </h2>
             <p className="overview-text text-stone-600 text-sm sm:text-base leading-relaxed font-medium">
-              We focus on the structural polishing, chemical treatment, and
-              seamless execution with high end finish of Italian marble,
-              granites &amp; all types of tiles across commercial, government,
-              and residential heritage spaces.
+              We focus on structural polishing, chemical treatment, and seamless
+              execution with a high-end finish for Italian marble, granites
+              &amp; all types of tiles across commercial, government, and
+              residential heritage spaces.
             </p>
             <div className="pt-2">
               <Link
@@ -241,7 +282,7 @@ export default function HomePage() {
                 className="overview-link group inline-flex items-center text-xs font-extrabold tracking-widest uppercase border-b-2 border-amber-600 pb-2 text-stone-900 hover:text-amber-600 transition-colors min-h-[44px]"
               >
                 Discover Our Corporate Heritage{" "}
-                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-1">
                   →
                 </span>
               </Link>
