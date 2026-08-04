@@ -272,7 +272,7 @@ export default function GalleryClient() {
                       alt={project.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className={`object-cover transition-all duration-700 ease-out ${
+                      className={`object-fit transition-all duration-700 ease-out ${
                         isActive
                           ? "brightness-40 scale-105"
                           : "brightness-90 group-hover:brightness-40 group-hover:scale-105"

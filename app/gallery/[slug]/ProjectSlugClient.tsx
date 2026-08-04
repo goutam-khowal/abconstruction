@@ -296,7 +296,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
                     fill
                     loading="lazy"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className={`object-cover transition-all duration-500 ${
+                    className={`object-fit transition-all duration-500 ${
                       isActive
                         ? "brightness-50 scale-105"
                         : "brightness-95 group-hover:brightness-50 group-hover:scale-105"
