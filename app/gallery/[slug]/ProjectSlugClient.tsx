@@ -49,12 +49,43 @@ export default function ProjectSlugClient({ project }: { project: any }) {
     async function fetchProjectImages() {
       try {
         setIsLoading(true);
-        const folderName = project.title.toUpperCase().trim();
+        const folderSearchName = project.title.toUpperCase().trim();
         const bucketName = "project-images";
 
+        // 1. Fetch root items to find exact matching folder name (Handles Central Vista, Dharav, etc.)
+        const { data: rootItems } = await supabase.storage
+          .from(bucketName)
+          .list("", { limit: 100 });
+
+        let targetFolder = folderSearchName;
+
+        if (rootItems && rootItems.length > 0) {
+          const matchedFolder = rootItems.find((item) => {
+            const nameUpper = item.name.toUpperCase().trim();
+            return (
+              nameUpper === folderSearchName ||
+              nameUpper.includes(folderSearchName) ||
+              folderSearchName.includes(nameUpper) ||
+              (folderSearchName.includes("CENTRAL VISTA") &&
+                nameUpper.includes("CENTRAL VISTA")) ||
+              (folderSearchName.includes("DHARAV") &&
+                nameUpper.includes("DHARAV")) ||
+              (folderSearchName.includes("AIIMS") &&
+                nameUpper.includes("AIIMS")) ||
+              (folderSearchName.includes("NACIN") &&
+                nameUpper.includes("NACIN"))
+            );
+          });
+
+          if (matchedFolder) {
+            targetFolder = matchedFolder.name;
+          }
+        }
+
+        // 2. Fetch files inside the matched target folder
         const { data: files, error } = await supabase.storage
           .from(bucketName)
-          .list(folderName, { limit: 100 });
+          .list(targetFolder, { limit: 100 });
 
         if (error || !files || files.length === 0) {
           setImages([]);
@@ -66,8 +97,14 @@ export default function ProjectSlugClient({ project }: { project: any }) {
             f.name !== ".emptyFolderPlaceholder" && !f.name.startsWith("."),
         );
 
-        const pathList = validFiles.map((f) => `${folderName}/${f.name}`);
+        if (validFiles.length === 0) {
+          setImages([]);
+          return;
+        }
 
+        const pathList = validFiles.map((f) => `${targetFolder}/${f.name}`);
+
+        // 3. Generate Signed URLs for all valid images
         const { data: signedData } = await supabase.storage
           .from(bucketName)
           .createSignedUrls(pathList, 3600);
@@ -82,7 +119,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
         }
 
         const mappedImages: GalleryImage[] = validFiles.map((file) => {
-          const fullPath = `${folderName}/${file.name}`;
+          const fullPath = `${targetFolder}/${file.name}`;
           const cleanWorkType = file.name
             .replace(/\.[^/.]+$/, "")
             .replace(/^\d+[-_]/, "")
@@ -91,7 +128,9 @@ export default function ProjectSlugClient({ project }: { project: any }) {
             .trim();
 
           return {
-            src: signedMap[fullPath] || "",
+            src:
+              signedMap[fullPath] ||
+              "https://a-bconstruction.in/wp-content/uploads/2025/01/1-1024x1024.png",
             alt: `${project.title} — ${cleanWorkType}`,
             workType: cleanWorkType || "Premium Surface Execution",
             fileName: file.name,
@@ -100,7 +139,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
 
         setImages(mappedImages);
       } catch (err) {
-        console.error("Image loading error:", err);
+        console.error("Slug image loading error:", err);
       } finally {
         setIsLoading(false);
       }
@@ -120,7 +159,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
           <Link
             href="/gallery"
-            className="inline-flex items-center text-xs font-extrabold uppercase tracking-widest text-amber-500 hover:underline mb-6 block"
+            className="inline-flex items-center text-xs font-extrabold uppercase tracking-widest text-amber-500 hover:underline mb-6"
           >
             ← Back to Gallery Overview
           </Link>
@@ -203,7 +242,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
                     fill
                     loading="lazy"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className={`object-contain transition-all duration-500 ${
+                    className={`object-cover transition-all duration-500 ${
                       isActive
                         ? "brightness-50 scale-105"
                         : "brightness-95 group-hover:brightness-50 group-hover:scale-105"
@@ -267,7 +306,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
               style={{ border: 0 }}
               loading="lazy"
               allowFullScreen
-              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${mapsQuery}`}
+              src={`https://maps.google.com/maps?q=${mapsQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
             />
           </div>
         </div>
