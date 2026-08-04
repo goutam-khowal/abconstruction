@@ -12,6 +12,76 @@ interface GalleryImage {
   fileName: string;
 }
 
+// 🗺️ MANUAL PROJECT LOCATIONS & MAP QUERY DICTIONARY
+// Add or edit manual Google Maps queries and display text here:
+const CUSTOM_PROJECT_LOCATIONS: Record<
+  string,
+  { displayLocation: string; mapsSearchQuery: string }
+> = {
+  AIIMS: {
+    displayLocation: "Ansari Nagar, New Delhi",
+    mapsSearchQuery: "AIIMS Hospital Delhi Ansari Nagar",
+  },
+  "CENTRAL VISTA": {
+    displayLocation: "Rajpath, New Delhi",
+    mapsSearchQuery: "Central Vista Project Kartavya Path New Delhi",
+  },
+  "DHARAV HIGH SCHOOL": {
+    displayLocation: "Gurugram, Haryana",
+    mapsSearchQuery: "Dharav High School Gurugram",
+  },
+  "NACIN ACADEMY": {
+    displayLocation: "Palasamudram, Andhra Pradesh",
+    mapsSearchQuery: "NACIN Campus Palasamudram Andhra Pradesh",
+  },
+  "SEBI BHAVAN": {
+    displayLocation: "BKC, Mumbai, Maharashtra",
+    mapsSearchQuery: "SEBI Bhavan BKC Mumbai",
+  },
+  "JAPAN EMBASSY": {
+    displayLocation: "Chanakyapuri, New Delhi",
+    mapsSearchQuery: "Embassy of Japan Chanakyapuri New Delhi",
+  },
+};
+
+function findBestMatchingFolder(
+  title: string,
+  rootFolders: { name: string }[],
+) {
+  const cleanTitle = title.toUpperCase().trim();
+  if (!rootFolders || rootFolders.length === 0) return cleanTitle;
+
+  const exact = rootFolders.find(
+    (f) => f.name.toUpperCase().trim() === cleanTitle,
+  );
+  if (exact) return exact.name;
+
+  const keywords = [
+    "AIIMS",
+    "CENTRAL VISTA",
+    "DHARAV",
+    "NACIN",
+    "CAMELLIAS",
+    "CMD",
+    "AMITY",
+    "SEBI",
+    "MES",
+  ];
+  for (const kw of keywords) {
+    if (cleanTitle.includes(kw)) {
+      const match = rootFolders.find((f) => f.name.toUpperCase().includes(kw));
+      if (match) return match.name;
+    }
+  }
+
+  const partial = rootFolders.find((f) => {
+    const folderName = f.name.toUpperCase().trim();
+    return folderName.includes(cleanTitle) || cleanTitle.includes(folderName);
+  });
+
+  return partial ? partial.name : cleanTitle;
+}
+
 export default function ProjectSlugClient({ project }: { project: any }) {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,40 +119,17 @@ export default function ProjectSlugClient({ project }: { project: any }) {
     async function fetchProjectImages() {
       try {
         setIsLoading(true);
-        const folderSearchName = project.title.toUpperCase().trim();
         const bucketName = "project-images";
 
-        // 1. Fetch root items to find exact matching folder name (Handles Central Vista, Dharav, etc.)
         const { data: rootItems } = await supabase.storage
           .from(bucketName)
           .list("", { limit: 100 });
 
-        let targetFolder = folderSearchName;
+        const targetFolder = findBestMatchingFolder(
+          project.title,
+          rootItems || [],
+        );
 
-        if (rootItems && rootItems.length > 0) {
-          const matchedFolder = rootItems.find((item) => {
-            const nameUpper = item.name.toUpperCase().trim();
-            return (
-              nameUpper === folderSearchName ||
-              nameUpper.includes(folderSearchName) ||
-              folderSearchName.includes(nameUpper) ||
-              (folderSearchName.includes("CENTRAL VISTA") &&
-                nameUpper.includes("CENTRAL VISTA")) ||
-              (folderSearchName.includes("DHARAV") &&
-                nameUpper.includes("DHARAV")) ||
-              (folderSearchName.includes("AIIMS") &&
-                nameUpper.includes("AIIMS")) ||
-              (folderSearchName.includes("NACIN") &&
-                nameUpper.includes("NACIN"))
-            );
-          });
-
-          if (matchedFolder) {
-            targetFolder = matchedFolder.name;
-          }
-        }
-
-        // 2. Fetch files inside the matched target folder
         const { data: files, error } = await supabase.storage
           .from(bucketName)
           .list(targetFolder, { limit: 100 });
@@ -104,7 +151,6 @@ export default function ProjectSlugClient({ project }: { project: any }) {
 
         const pathList = validFiles.map((f) => `${targetFolder}/${f.name}`);
 
-        // 3. Generate Signed URLs for all valid images
         const { data: signedData } = await supabase.storage
           .from(bucketName)
           .createSignedUrls(pathList, 3600);
@@ -148,13 +194,23 @@ export default function ProjectSlugClient({ project }: { project: any }) {
     fetchProjectImages();
   }, [project]);
 
-  const mapsQuery = encodeURIComponent(
-    `${project.title} ${project.location || "New Delhi India"}`,
+  // 🗺️ Manual Location Resolution
+  const projectTitleUpper = project.title.toUpperCase().trim();
+  const matchedCustomLocation = Object.keys(CUSTOM_PROJECT_LOCATIONS).find(
+    (key) => projectTitleUpper.includes(key),
   );
+
+  const locationData = matchedCustomLocation
+    ? CUSTOM_PROJECT_LOCATIONS[matchedCustomLocation]
+    : {
+        displayLocation: project.location || "Delhi NCR, India",
+        mapsSearchQuery: `${project.title} ${project.location || "New Delhi India"}`,
+      };
+
+  const encodedMapQuery = encodeURIComponent(locationData.mapsSearchQuery);
 
   return (
     <div className="bg-stone-50 text-stone-900 font-sans min-h-screen">
-      {/* Header Banner */}
       <section className="relative bg-stone-900 text-white pt-28 sm:pt-32 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
           <Link
@@ -173,7 +229,6 @@ export default function ProjectSlugClient({ project }: { project: any }) {
         </div>
       </section>
 
-      {/* Key Project Details Bar */}
       <section className="bg-stone-950 text-white border-b border-stone-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-xs uppercase font-extrabold">
           <div>
@@ -181,7 +236,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
               Location
             </span>
             <span className="text-stone-200">
-              📍 {project.location || "Delhi NCR, India"}
+              📍 {locationData.displayLocation}
             </span>
           </div>
           <div>
@@ -209,7 +264,6 @@ export default function ProjectSlugClient({ project }: { project: any }) {
         </div>
       </section>
 
-      {/* Image Gallery Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-16">
         <h2 className="text-xl sm:text-2xl font-extrabold uppercase text-stone-900 tracking-tight mb-8">
           Execution Image Lookbook
@@ -250,7 +304,6 @@ export default function ProjectSlugClient({ project }: { project: any }) {
                     unoptimized
                   />
 
-                  {/* Hover / Touch Info Overlay */}
                   <div
                     className={`absolute inset-0 bg-stone-950/80 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center transition-all duration-300 z-20 ${
                       isActive
@@ -289,15 +342,16 @@ export default function ProjectSlugClient({ project }: { project: any }) {
               </h2>
             </div>
             <a
-              href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
+              href={`https://www.google.com/maps/search/?api=1&query=${encodedMapQuery}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-xs font-extrabold text-amber-600 uppercase tracking-widest hover:underline"
             >
-              📍 Open in Native Google Maps →
+              📍 Open in Google Maps →
             </a>
           </div>
 
+          {/* ⚡ API-Keyless Embed Iframe */}
           <div className="w-full h-80 sm:h-96 border border-stone-300 rounded-sm overflow-hidden shadow-sm bg-stone-200">
             <iframe
               title={`${project.title} Map Location`}
@@ -306,7 +360,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
               style={{ border: 0 }}
               loading="lazy"
               allowFullScreen
-              src={`https://maps.google.com/maps?q=${mapsQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+              src={`https://maps.google.com/maps?q=${encodedMapQuery}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
             />
           </div>
         </div>

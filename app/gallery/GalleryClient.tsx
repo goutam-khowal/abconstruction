@@ -30,6 +30,49 @@ function slugify(text: string) {
     .trim();
 }
 
+// 🎯 Robust Folder Matcher for Supabase Buckets (Fixes AIIMS, Central Vista, etc.)
+function findBestMatchingFolder(
+  title: string,
+  rootFolders: { name: string }[],
+) {
+  const cleanTitle = title.toUpperCase().trim();
+
+  if (!rootFolders || rootFolders.length === 0) return cleanTitle;
+
+  // 1. Exact match
+  const exact = rootFolders.find(
+    (f) => f.name.toUpperCase().trim() === cleanTitle,
+  );
+  if (exact) return exact.name;
+
+  // 2. High-priority keyword anchors (e.g. AIIMS, CENTRAL VISTA, DHARAV)
+  const keywords = [
+    "AIIMS",
+    "CENTRAL VISTA",
+    "DHARAV",
+    "NACIN",
+    "CAMELLIAS",
+    "CMD",
+    "AMITY",
+    "SEBI",
+    "MES",
+  ];
+  for (const kw of keywords) {
+    if (cleanTitle.includes(kw)) {
+      const match = rootFolders.find((f) => f.name.toUpperCase().includes(kw));
+      if (match) return match.name;
+    }
+  }
+
+  // 3. Fallback partial substring match
+  const partial = rootFolders.find((f) => {
+    const folderName = f.name.toUpperCase().trim();
+    return folderName.includes(cleanTitle) || cleanTitle.includes(folderName);
+  });
+
+  return partial ? partial.name : cleanTitle;
+}
+
 export default function GalleryClient() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -66,7 +109,6 @@ export default function GalleryClient() {
     }, 2000);
   };
 
-  // Hero Animations
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
@@ -94,19 +136,17 @@ export default function GalleryClient() {
     { scope: containerRef },
   );
 
-  // Eager Loading with Robust Supabase Folder Matching
   useEffect(() => {
     async function fetchAllProjectsAndImages() {
       try {
         setIsLoading(true);
-
-        // 1. Fetch root folder list once to do smart folder matching
         const bucketName = "project-images";
+
+        // Fetch all top-level storage directories once
         const { data: rootItems } = await supabase.storage
           .from(bucketName)
           .list("", { limit: 100 });
 
-        // 2. Fetch Projects from DB
         const { data: dbProjects, error } = await supabase
           .from("projects")
           .select("*")
@@ -117,40 +157,17 @@ export default function GalleryClient() {
         if (dbProjects) {
           const mappedProjects: GalleryProject[] = await Promise.all(
             dbProjects.map(async (project: any) => {
-              const folderSearchName = project.title.toUpperCase().trim();
-              let targetFolder = folderSearchName;
-
-              // Smart Fuzzy Match Logic for Supabase Storage Folders
-              if (rootItems && rootItems.length > 0) {
-                const matchedFolder = rootItems.find((item) => {
-                  const nameUpper = item.name.toUpperCase().trim();
-                  return (
-                    nameUpper === folderSearchName ||
-                    nameUpper.includes(folderSearchName) ||
-                    folderSearchName.includes(nameUpper) ||
-                    (folderSearchName.includes("CENTRAL VISTA") &&
-                      nameUpper.includes("CENTRAL VISTA")) ||
-                    (folderSearchName.includes("DHARAV") &&
-                      nameUpper.includes("DHARAV")) ||
-                    (folderSearchName.includes("AIIMS") &&
-                      nameUpper.includes("AIIMS")) ||
-                    (folderSearchName.includes("NACIN") &&
-                      nameUpper.includes("NACIN"))
-                  );
-                });
-
-                if (matchedFolder) {
-                  targetFolder = matchedFolder.name;
-                }
-              }
-
+              const matchedFolder = findBestMatchingFolder(
+                project.title,
+                rootItems || [],
+              );
               let coverUrl =
                 "https://a-bconstruction.in/wp-content/uploads/2025/01/1-1024x1024.png";
 
               try {
                 const { data: files } = await supabase.storage
                   .from(bucketName)
-                  .list(targetFolder, { limit: 10 });
+                  .list(matchedFolder, { limit: 10 });
 
                 if (files && files.length > 0) {
                   const validFiles = files.filter(
@@ -159,7 +176,7 @@ export default function GalleryClient() {
                       !f.name.startsWith("."),
                   );
                   if (validFiles.length > 0) {
-                    const fullPath = `${targetFolder}/${validFiles[0].name}`;
+                    const fullPath = `${matchedFolder}/${validFiles[0].name}`;
                     const { data: signedData } = await supabase.storage
                       .from(bucketName)
                       .createSignedUrl(fullPath, 3600);
@@ -170,7 +187,7 @@ export default function GalleryClient() {
                   }
                 }
               } catch (e) {
-                console.error("Cover image fetch failed for", targetFolder, e);
+                console.error("Cover image fetch error for", matchedFolder, e);
               }
 
               return {
@@ -179,7 +196,7 @@ export default function GalleryClient() {
                 category: project.category || "Commercial",
                 year: project.year ? Number(project.year) : null,
                 slug: slugify(project.title),
-                folderSearchName,
+                folderSearchName: matchedFolder,
                 coverImage: coverUrl,
                 location: project.location || "India",
               };
@@ -189,7 +206,7 @@ export default function GalleryClient() {
           setProjects(mappedProjects);
         }
       } catch (err) {
-        console.error("Eager fetch error:", err);
+        console.error("Gallery fetch error:", err);
       } finally {
         setIsLoading(false);
       }
@@ -203,7 +220,6 @@ export default function GalleryClient() {
       ref={containerRef}
       className="bg-stone-50 text-stone-900 font-sans min-h-screen"
     >
-      {/* Hero Header */}
       <section
         ref={heroRef}
         className="relative min-h-[40vh] sm:min-h-[45vh] flex items-center bg-stone-900 text-white pt-28 sm:pt-32 pb-12 sm:pb-16 overflow-hidden"
@@ -225,7 +241,6 @@ export default function GalleryClient() {
         </div>
       </section>
 
-      {/* Main Grid Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-16">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -248,7 +263,6 @@ export default function GalleryClient() {
                   onClick={(e) => handleCardTouch(cardId, e)}
                   className="group relative bg-stone-900 rounded-sm overflow-hidden shadow-md cursor-pointer select-none"
                 >
-                  {/* Image Container */}
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-800">
                     <Image
                       src={
@@ -266,17 +280,14 @@ export default function GalleryClient() {
                       unoptimized
                     />
 
-                    {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
 
-                    {/* Sector Badge */}
                     <div className="absolute top-4 left-4 z-10">
                       <span className="px-3 py-1 bg-stone-950/80 backdrop-blur-md border border-amber-500/40 text-[10px] font-extrabold uppercase tracking-widest text-amber-400 rounded-sm">
                         {project.category}
                       </span>
                     </div>
 
-                    {/* Hover / Touch Overlay */}
                     <div
                       className={`absolute inset-0 p-6 flex flex-col justify-between z-20 transition-all duration-300 ${
                         isActive
@@ -294,7 +305,6 @@ export default function GalleryClient() {
                         </h3>
                       </div>
 
-                      {/* Direct Link Button */}
                       <div className="pt-4">
                         <Link
                           href={`/gallery/${project.slug}`}
@@ -307,7 +317,6 @@ export default function GalleryClient() {
                     </div>
                   </div>
 
-                  {/* Bottom Footer */}
                   <div className="p-5 bg-stone-900 text-white border-t border-stone-800 flex items-center justify-between group-hover:border-amber-600/50 transition-colors">
                     <div>
                       <span className="text-stone-400 text-[10px] uppercase tracking-wider block font-semibold">
