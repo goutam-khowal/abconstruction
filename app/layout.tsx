@@ -13,22 +13,19 @@ const jakartaFont = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "A&B Construction | Premier Stone & Marble Installation India",
   description:
-    "Expert laying and grinding of Italian and granite marble, Kota & Dholpur stones, and high-performance tiles. Founded in 1977. Serving Delhi and across India.",
+    "Expert laying and grinding of Italian, Onyx and granite marble& Dholpur stones, and high-performance tiles. Founded in 1977. Serving Delhi and across India.",
   icons: {
     icon: [
-      { url: "/favicon.ico" },
-      // ⚡ Google requires 48x48px multiples for search results
       { url: "/genfavicon-48.png", sizes: "48x48", type: "image/png" },
       { url: "/genfavicon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
-    shortcut: ["/favicon.ico"],
     apple: [
       {
         url: "/apple-touch-icon-180x180.png",
         sizes: "180x180",
         type: "image/png",
       },
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
   manifest: "/site.webmanifest",
