@@ -13,25 +13,25 @@ const projectCategories = [
   {
     label: "Commercial Projects",
     image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/1-1024x1024.png",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1200&auto=format&fit=crop",
     desc: "Office complexes, retail centers, luxury hotels, and corporate headquarters rendered with premium marble and granite finishes.",
   },
   {
     label: "Healthcare Projects",
     image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/2-1024x1024.png",
+      "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=1200&auto=format&fit=crop",
     desc: "Hospitals and medical research facilities requiring durable, hygienic, and seamless floor and wall matrices.",
   },
   {
     label: "Residential Projects",
     image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/3-1024x1024.png",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
     desc: "Luxury private residences, executive apartments, and villas transformed with Italian marble laying and precision polishing.",
   },
   {
     label: "Public & Institutional Projects",
     image:
-      "https://a-bconstruction.in/wp-content/uploads/2025/01/4-1024x1024.png",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
     desc: "Government headquarters, embassies, educational campuses, and public monuments engineered for high durability.",
   },
 ];

@@ -216,7 +216,7 @@ export default function Navbar() {
             className="flex items-center gap-3 group min-h-[48px] focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-sm p-1"
           >
             <Image
-              src="https://a-bconstruction.in/wp-content/uploads/2025/01/cropped-AB-Con-Logo-1-3-80x64.png"
+              src="https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/public/People/icons/a&bconstruction_logo.png"
               alt="A&B Construction Logo"
               width={38}
               height={30}
