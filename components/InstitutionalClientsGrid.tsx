@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { supabase } from "@/lib/supabase";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface PartnerItem {
   id: number | string;
@@ -10,7 +15,6 @@ interface PartnerItem {
   logo_url: string | null;
 }
 
-// 📌 Priority Client Ranking List (First in array = Top of Grid)
 const PRIORITY_ENTERPRISES = [
   "CENTRAL VISTA",
   "AIIMS",
@@ -25,6 +29,9 @@ const PRIORITY_ENTERPRISES = [
 ];
 
 export default function InstitutionalClientsGrid() {
+  const containerRef = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
   const [partners, setPartners] = useState<PartnerItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -94,7 +101,6 @@ export default function InstitutionalClientsGrid() {
             };
           });
 
-          // 🏆 Custom Priority Sorting Algorithm (Puts flagship clients at the top)
           const sortedPartners = [...rawPartners].sort((a, b) => {
             const nameA = a.company_name.toUpperCase();
             const nameB = b.company_name.toUpperCase();
@@ -125,18 +131,99 @@ export default function InstitutionalClientsGrid() {
     fetchPartners();
   }, []);
 
+  // GSAP Animation Start: Grid Entrance & Stagger Sequence
+  useGSAP(
+    () => {
+      if (loading || partners.length === 0 || !gridRef.current) return;
+
+      const cards = gridRef.current.querySelectorAll(".client-card-anim");
+      if (cards.length === 0) return;
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set([cards, ".grid-header-rule"], { opacity: 1, y: 0, scaleX: 1 });
+      });
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        });
+
+        tl.fromTo(
+          ".grid-header-rule",
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.6, ease: "expo.out" },
+        ).fromTo(
+          cards,
+          { opacity: 0, y: 30, scale: 0.96 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            stagger: {
+              grid: "auto",
+              amount: 0.6,
+            },
+            ease: "power3.out",
+          },
+          "-=0.3",
+        );
+      });
+
+      const refreshId = requestAnimationFrame(() => ScrollTrigger.refresh());
+
+      return () => {
+        cancelAnimationFrame(refreshId);
+        mm.revert();
+      };
+    },
+    { dependencies: [loading, partners], scope: containerRef },
+  );
+  // GSAP Animation End: Grid Entrance & Stagger Sequence
+
   if (loading) {
     return (
       <section className="bg-stone-950 py-12 sm:py-20 border-y border-stone-800/80 text-white font-sans">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center animate-pulse mb-10">
-          <div className="h-3 w-36 bg-stone-800 mx-auto rounded mb-3" />
-          <div className="h-8 w-64 sm:w-80 bg-stone-800 mx-auto rounded" />
+        <style jsx>{`
+          @keyframes shimmer {
+            0% {
+              background-position: -200% 0;
+            }
+            100% {
+              background-position: 200% 0;
+            }
+          }
+          .shimmer {
+            background-image: linear-gradient(
+              100deg,
+              rgba(41, 37, 36, 0.6) 30%,
+              rgba(120, 113, 108, 0.35) 50%,
+              rgba(41, 37, 36, 0.6) 70%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.6s ease-in-out infinite;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .shimmer {
+              animation: none;
+            }
+          }
+        `}</style>
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center mb-10">
+          <div className="shimmer h-3 w-36 mx-auto rounded mb-3" />
+          <div className="shimmer h-8 w-64 sm:w-80 mx-auto rounded" />
         </div>
         <div className="max-w-7xl mx-auto px-3 sm:px-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((idx) => (
             <div
               key={idx}
-              className="min-h-[220px] bg-stone-900/60 rounded-lg animate-pulse border border-stone-800"
+              className="shimmer min-h-[220px] rounded-lg border border-stone-800"
             />
           ))}
         </div>
@@ -147,11 +234,18 @@ export default function InstitutionalClientsGrid() {
   if (partners.length === 0) return null;
 
   return (
-    <section className="bg-stone-950 py-12 sm:py-20 border-y border-stone-800/80 text-white font-sans select-none relative w-full overflow-hidden">
+    <section
+      ref={containerRef}
+      className="bg-stone-950 py-12 sm:py-20 border-y border-stone-800/80 text-white font-sans select-none relative w-full overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center mb-10 sm:mb-14">
         <span className="text-amber-500 text-[10px] sm:text-xs tracking-[0.25em] font-extrabold uppercase block mb-2">
           Institutional Portfolio
         </span>
+        <span
+          className="grid-header-rule inline-block h-[2px] w-14 bg-amber-500/70 mb-4 origin-center"
+          aria-hidden="true"
+        />
         <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
           Trusted Partners &amp; Clients
         </h2>
@@ -162,8 +256,10 @@ export default function InstitutionalClientsGrid() {
       </div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 md:px-8">
-        {/* 📱 Mobile First Dynamic Grid Layout */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 items-stretch">
+        <div
+          ref={gridRef}
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 items-stretch"
+        >
           {partners.map((client) => (
             <ClientBrandCard
               key={client.id}
@@ -185,14 +281,53 @@ function ClientBrandCard({
   logo: string | null;
 }) {
   const [hasError, setHasError] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // GSAP Animation Start: 3D Mouse Movement Hover Effect
+  const { contextSafe } = useGSAP({ scope: cardRef });
+
+  const handleMouseMove = contextSafe((e: React.MouseEvent<HTMLDivElement>) => {
+    if (
+      !cardRef.current ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    gsap.to(cardRef.current, {
+      rotateX: -y * 0.05,
+      rotateY: x * 0.05,
+      transformPerspective: 600,
+      duration: 0.3,
+      ease: "power1.out",
+    });
+  });
+
+  const handleMouseLeave = contextSafe(() => {
+    if (!cardRef.current) return;
+    gsap.to(cardRef.current, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  });
+  // GSAP Animation End: 3D Mouse Movement Hover Effect
 
   return (
-    <div className="group relative flex flex-col justify-between w-full min-h-[220px] sm:min-h-[250px] p-3.5 sm:p-4 bg-stone-900/90 hover:bg-stone-900 border border-stone-800 hover:border-amber-500/80 rounded-lg shadow-md hover:shadow-[0_10px_24px_rgba(217,119,6,0.2)] transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98]">
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="client-card-anim group relative flex flex-col justify-between w-full min-h-[220px] sm:min-h-[250px] p-3.5 sm:p-4 bg-stone-900/90 hover:bg-stone-900 border border-stone-800 hover:border-amber-500/80 rounded-lg shadow-md hover:shadow-[0_10px_24px_rgba(217,119,6,0.2)] transition-colors duration-300 transform-gpu"
+    >
       {/* Top Accent Bar */}
       <div className="w-6 sm:w-8 h-[2px] bg-stone-700 group-hover:bg-amber-500 group-hover:w-12 transition-all duration-300 rounded-full mb-2" />
 
       {/* Center Image Container */}
-      <div className="relative w-full h-28 sm:h-32 flex items-center justify-center p-2 rounded bg-stone-100 group-hover:bg-white transition-colors duration-300 overflow-hidden shrink-0">
+      <div className="relative w-full h-28 sm:h-32 flex items-center justify-center p-2 rounded bg-white transition-colors duration-300 overflow-hidden shrink-0">
         {logo && !hasError ? (
           <Image
             src={logo}
@@ -200,7 +335,7 @@ function ClientBrandCard({
             fill
             loading="lazy"
             onError={() => setHasError(true)}
-            className="object-contain p-2 filter transition-all duration-300 group-hover:scale-105"
+            className="object-contain p-2 filter transition-all duration-300 ease-out group-hover:scale-[1.04]"
             unoptimized
           />
         ) : (
@@ -212,7 +347,7 @@ function ClientBrandCard({
         )}
       </div>
 
-      {/* 📜 Bottom Text Block: NO TRUNCATION / NO OVERFLOW */}
+      {/* Bottom Text Block */}
       <div className="w-full text-center mt-3 pt-1 flex flex-col justify-center flex-1">
         <h3 className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wide text-stone-200 group-hover:text-amber-400 transition-colors break-words whitespace-normal leading-snug">
           {name}

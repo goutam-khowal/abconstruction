@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface HeritageProject {
   id: number;
@@ -16,7 +21,6 @@ interface HeritageProject {
   hasPortfolioImages?: boolean;
 }
 
-// 🏛️ EXTRACTED 59 DELIVERED PROJECTS DATASET FROM YOUR HTML
 const completedProjectsData: HeritageProject[] = [
   {
     id: 1,
@@ -443,8 +447,6 @@ const completedProjectsData: HeritageProject[] = [
   },
 ];
 
-// Strips periods, commas, hyphens, parens etc. and collapses whitespace,
-// so "dlf" matches "D.L.F." and "idbi" matches "I.D.B.I".
 function normalize(str: string) {
   return str
     .toLowerCase()
@@ -453,18 +455,13 @@ function normalize(str: string) {
     .trim();
 }
 
-// Escapes regex special chars so raw user input is safe to build a RegExp from
 function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Highlights matched terms inside the *original* (unnormalized) text.
-// Builds the pattern loosely so it still finds "D.L.F." when the term is "dlf".
 function highlightMatches(text: string, terms: string[]) {
   if (terms.length === 0) return text;
 
-  // For each term, build a pattern that allows optional punctuation/spaces
-  // between its characters, e.g. "dlf" -> /d[.,\s]*l[.,\s]*f/i
   const patterns = terms.map((term) =>
     escapeRegExp(term).split("").join("[.,\\-\\s]*"),
   );
@@ -483,12 +480,15 @@ function highlightMatches(text: string, terms: string[]) {
 }
 
 export default function ArchiveProjectsTable() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
+  const countValue = useRef(0);
+  const prefersReducedMotion = useRef(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-  // Split the query into individual terms so multi-word searches
-  // (e.g. "embassy delhi") match across name + location + category
-  // rather than requiring one field to contain the whole phrase.
   const searchTerms = useMemo(
     () => normalize(searchTerm).split(/\s+/).filter(Boolean),
     [searchTerm],
@@ -509,18 +509,164 @@ export default function ArchiveProjectsTable() {
     });
   }, [searchTerms, selectedCategory]);
 
+  // GSAP Animation Start: Section Header & Table Shell Entrance
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        prefersReducedMotion.current = true;
+        gsap.set(
+          [
+            ".archive-header-box",
+            ".archive-rule-line",
+            ".archive-table-container",
+          ],
+          {
+            opacity: 1,
+            y: 0,
+            scaleX: 1,
+            clearProps: "filter",
+          },
+        );
+      });
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        prefersReducedMotion.current = false;
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+
+        tl.fromTo(
+          ".archive-header-eyebrow",
+          { opacity: 0, y: -8 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        )
+          .fromTo(
+            ".archive-rule-line",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.6, ease: "expo.out" },
+            "-=0.25",
+          )
+          .fromTo(
+            ".archive-header-title",
+            { opacity: 0, y: 18, filter: "blur(4px)" },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.7,
+              ease: "power3.out",
+            },
+            "-=0.4",
+          )
+          .fromTo(
+            ".archive-header-desc",
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+            "-=0.4",
+          )
+          .fromTo(
+            ".archive-table-container",
+            { opacity: 0, y: 24, scale: 0.99 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out" },
+            "-=0.3",
+          );
+      });
+
+      return () => mm.revert();
+    },
+    { scope: sectionRef },
+  );
+  // GSAP Animation End: Section Header & Table Shell Entrance
+
+  // GSAP Animation Start: Row Staggering on Filter Update
+  const { contextSafe } = useGSAP({ scope: sectionRef });
+
+  const animateRows = contextSafe(() => {
+    if (!tableBodyRef.current) return;
+    const rows = tableBodyRef.current.querySelectorAll("tr");
+    if (prefersReducedMotion.current) {
+      gsap.set(rows, { opacity: 1, y: 0 });
+      return;
+    }
+
+    gsap.killTweensOf(rows);
+    gsap.fromTo(
+      rows,
+      { opacity: 0, y: 12 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.35,
+        stagger: {
+          each: 0.018,
+          amount: 0.25,
+        },
+        ease: "power2.out",
+      },
+    );
+  });
+
+  useEffect(() => {
+    animateRows();
+  }, [filteredProjects, animateRows]);
+  // GSAP Animation End: Row Staggering on Filter Update
+
+  // GSAP Animation Start: Numerical Counter Tween
+  useEffect(() => {
+    const target = filteredProjects.length;
+    if (prefersReducedMotion.current || !countRef.current) {
+      countValue.current = target;
+      if (countRef.current) countRef.current.textContent = String(target);
+      return;
+    }
+
+    const obj = { val: countValue.current };
+    const tween = gsap.to(obj, {
+      val: target,
+      duration: 0.45,
+      ease: "power2.out",
+      onUpdate: () => {
+        if (countRef.current) {
+          countRef.current.textContent = String(Math.round(obj.val));
+        }
+      },
+      onComplete: () => {
+        countValue.current = target;
+      },
+    });
+
+    return () => {
+      tween.kill();
+    };
+  }, [filteredProjects]);
+  // GSAP Animation End: Numerical Counter Tween
+
   return (
-    <section className="max-w-7xl mx-auto px-6 sm:px-12 py-16 font-sans">
+    <section
+      ref={sectionRef}
+      className="max-w-7xl mx-auto px-6 sm:px-12 py-16 font-sans"
+    >
       {/* Header Context */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div className="archive-header-box flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
-          <span className="text-brand-blue text-[10px] tracking-[0.3em] font-black uppercase block mb-1">
+          <span className="archive-header-eyebrow text-brand-blue text-[10px] tracking-[0.3em] font-black uppercase block mb-1">
             Historic Deliveries Registry
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">
+          <span
+            className="archive-rule-line block h-[2px] w-14 bg-brand-blue/70 mb-3 origin-left"
+            aria-hidden="true"
+          />
+          <h2 className="archive-header-title text-2xl sm:text-3xl font-extrabold uppercase text-slate-900 tracking-tight">
             Comprehensive Project Archive
           </h2>
-          <p className="text-slate-500 text-xs font-medium mt-1">
+          <p className="archive-header-desc text-slate-500 text-xs font-medium mt-1">
             Verified institutional, commercial, and embassy stone executions
             completed across India.
           </p>
@@ -534,14 +680,14 @@ export default function ArchiveProjectsTable() {
               placeholder="Search Project / Location / Sector..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 pr-8 bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue rounded-none shadow-sm min-w-[240px]"
+              className="px-4 py-2 pr-8 bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue rounded-none shadow-sm min-w-[240px] transition-colors duration-200"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
                 aria-label="Clear search"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-sm font-bold"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-sm font-bold transition-colors duration-150"
               >
                 ×
               </button>
@@ -550,7 +696,7 @@ export default function ArchiveProjectsTable() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 bg-white border border-slate-300 text-xs font-bold uppercase text-slate-800 focus:outline-none focus:border-brand-blue rounded-none shadow-sm cursor-pointer"
+            className="px-4 py-2 bg-white border border-slate-300 text-xs font-bold uppercase text-slate-800 focus:outline-none focus:border-brand-blue rounded-none shadow-sm cursor-pointer transition-colors duration-200"
           >
             <option value="ALL">All Sectors</option>
             <option value="Government/Embassy">Govt & Embassy</option>
@@ -563,12 +709,13 @@ export default function ArchiveProjectsTable() {
       </div>
 
       {/* Result count */}
-      <div className="mb-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-        {filteredProjects.length} of {completedProjectsData.length} records
+      <div className="mb-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider tabular-nums">
+        <span ref={countRef}>{filteredProjects.length}</span> of{" "}
+        {completedProjectsData.length} records
       </div>
 
       {/* Table Container */}
-      <div className="bg-white border border-slate-200 shadow-sm overflow-hidden rounded-md">
+      <div className="archive-table-container bg-white border border-slate-200 shadow-sm overflow-hidden rounded-md">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
@@ -580,14 +727,21 @@ export default function ArchiveProjectsTable() {
                 <th className="py-4 px-6 text-center">Geo Navigation</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+            <tbody
+              ref={tableBodyRef}
+              className="divide-y divide-slate-100 font-semibold text-slate-700"
+            >
               {filteredProjects.length > 0 ? (
                 filteredProjects.map((p, index) => (
                   <tr
                     key={p.id}
-                    className="hover:bg-blue-50/50 transition-colors duration-200"
+                    className="group relative hover:bg-blue-50/50 transition-colors duration-200"
                   >
-                    <td className="py-3.5 px-6 text-center text-slate-400 font-mono text-[11px]">
+                    <td className="py-3.5 px-6 text-center text-slate-400 font-mono text-[11px] relative">
+                      <span
+                        className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] bg-brand-blue scale-y-0 group-hover:scale-y-100 origin-center transition-transform duration-200"
+                        aria-hidden="true"
+                      />
                       {String(index + 1).padStart(2, "0")}
                     </td>
                     <td className="py-3.5 px-6 font-extrabold text-slate-900 uppercase">
