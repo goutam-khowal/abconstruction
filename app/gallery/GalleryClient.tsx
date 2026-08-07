@@ -264,6 +264,9 @@ export default function GalleryClient() {
                   <h3 className="text-white text-lg sm:text-xl md:text-2xl font-black uppercase tracking-tight leading-snug max-w-[90%] transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300 delay-75">
                     {project.title}
                   </h3>
+                  <span className="text-amber-400 text-[10px] sm:text-xs font-black uppercase tracking-[0.25em] mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                    {project.year}
+                  </span>
                 </div>
 
                 {/* Bottom Right Chevron Action Box */}
