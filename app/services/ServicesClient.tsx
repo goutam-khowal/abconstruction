@@ -13,25 +13,25 @@ const projectCategories = [
   {
     label: "Commercial Projects",
     image:
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1200&auto=format&fit=crop",
+      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/DLF%20CAMELLIAS%20GURUGRAM/01-dlf%20camellias%20gurugram.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9ETEYgQ0FNRUxMSUFTIEdVUlVHUkFNLzAxLWRsZiBjYW1lbGxpYXMgZ3VydWdyYW0ud2VicCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODYxMzk2ODcsImV4cCI6MTgxNzY3NTY4N30.yNo2AoAuE_1a11fPvr9eijozbB6H-YS53hkCAXXM7wU",
     desc: "Office complexes, retail centers, luxury hotels, and corporate headquarters rendered with premium marble and granite finishes.",
   },
   {
     label: "Healthcare Projects",
     image:
-      "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=1200&auto=format&fit=crop",
+      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/AIIMS/01-Dholpur%20sandstone%20dry%20cladding%20by%20using%20clamp%20&%20fasteners.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9BSUlNUy8wMS1EaG9scHVyIHNhbmRzdG9uZSBkcnkgY2xhZGRpbmcgYnkgdXNpbmcgY2xhbXAgJiBmYXN0ZW5lcnMud2VicCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODYxMzk2NTgsImV4cCI6MTgxNzY3NTY1OH0.G9rwuv-_Inj97VrSRKbe0itHOYvEfmZ2LmT2b_9Hz6Q",
     desc: "Hospitals and medical research facilities requiring durable, hygienic, and seamless floor and wall matrices.",
   },
   {
     label: "Residential Projects",
     image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
+      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/ACIL%20CMD%20SIR%20HOUSE/01-khareda%20stone%20cladding.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9BQ0lMIENNRCBTSVIgSE9VU0UvMDEta2hhcmVkYSBzdG9uZSBjbGFkZGluZy53ZWJwIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NjE0MDE1OCwiZXhwIjoxODE3Njc2MTU4fQ.X9NgVhS2v3nd8e-sV_9cHl-wETp1iK6vwEKcLKYOTvQ",
     desc: "Luxury private residences, executive apartments, and villas transformed with Italian marble laying and precision polishing.",
   },
   {
     label: "Public & Institutional Projects",
     image:
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
+      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/Central%20Vista%20Project/01-Central-Vista.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9DZW50cmFsIFZpc3RhIFByb2plY3QvMDEtQ2VudHJhbC1WaXN0YS53ZWJwIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NjEzOTQzMCwiZXhwIjoxODE3Njc1NDMwfQ.EvXLcVJV1eAncVmb80cu7U_Ey7Z3HeMnugvAMA7-EQE",
     desc: "Government headquarters, embassies, educational campuses, and public monuments engineered for high durability.",
   },
 ];
@@ -245,7 +245,7 @@ export default function ServicesClient() {
               key={cat.label}
               className="category-card-anim group border border-stone-200 bg-white flex flex-col justify-between hover:border-amber-500/50 transition-colors duration-300 rounded-sm overflow-hidden shadow-sm"
             >
-              <div className="relative h-56 sm:h-72 w-full overflow-hidden bg-stone-100 border-b border-stone-200">
+              <div className="relative h-76 sm:h-96 w-full overflow-hidden bg-stone-100 border-b border-stone-200">
                 <Image
                   src={cat.image}
                   alt={cat.label}
@@ -253,7 +253,8 @@ export default function ServicesClient() {
                   priority={idx < 2}
                   loading={idx < 2 ? "eager" : "lazy"}
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover filter brightness-95 group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-cover
+                  object-top filter brightness-95 group-hover:scale-105 transition-transform duration-700 ease-out"
                   unoptimized
                 />
               </div>

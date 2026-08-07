@@ -5,19 +5,28 @@ import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-interface GalleryImage {
+interface GalleryMediaItem {
   src: string;
   alt: string;
   workType: string;
   fileName: string;
+  isVideo: boolean;
 }
 
 // 🗺️ MANUAL PROJECT LOCATIONS & MAP QUERY DICTIONARY
-// Add or edit manual Google Maps queries and display text here:
 const CUSTOM_PROJECT_LOCATIONS: Record<
   string,
   { displayLocation: string; mapsSearchQuery: string }
 > = {
+  "TRADE FACILITATION CENTRE & CRAFT MUSEUM": {
+    displayLocation: "Varanasi (Banaras), Uttar Pradesh",
+    mapsSearchQuery:
+      "Deendayal Hastkala Sankul Trade Facilitation Centre Varanasi",
+  },
+  "SINGAPORE HIGH COMMISSION": {
+    displayLocation: "Chanakyapuri, New Delhi",
+    mapsSearchQuery: "Singapore High Commission Chanakyapuri New Delhi",
+  },
   AIIMS: {
     displayLocation: "Ansari Nagar, New Delhi",
     mapsSearchQuery: "AIIMS Hospital Delhi Ansari Nagar",
@@ -57,6 +66,11 @@ function findBestMatchingFolder(
   if (exact) return exact.name;
 
   const keywords = [
+    "TRADE FACILITATION",
+    "CRAFT MUSEUM",
+    "SINGAPORE",
+    "HIGH COMMISSION",
+    "EMBASSY",
     "AIIMS",
     "CENTRAL VISTA",
     "DHARAV",
@@ -83,7 +97,7 @@ function findBestMatchingFolder(
 }
 
 export default function ProjectSlugClient({ project }: { project: any }) {
-  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [mediaItems, setMediaItems] = useState<GalleryMediaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeMobileCard, setActiveMobileCard] = useState<string | null>(null);
 
@@ -116,7 +130,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
   };
 
   useEffect(() => {
-    async function fetchProjectImages() {
+    async function fetchProjectMedia() {
       try {
         setIsLoading(true);
         const bucketName = "project-images";
@@ -135,7 +149,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
           .list(targetFolder, { limit: 100 });
 
         if (error || !files || files.length === 0) {
-          setImages([]);
+          setMediaItems([]);
           return;
         }
 
@@ -145,7 +159,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
         );
 
         if (validFiles.length === 0) {
-          setImages([]);
+          setMediaItems([]);
           return;
         }
 
@@ -164,8 +178,14 @@ export default function ProjectSlugClient({ project }: { project: any }) {
           });
         }
 
-        const mappedImages: GalleryImage[] = validFiles.map((file) => {
+        const videoExtensions = [".mp4", ".webm", ".mov", ".ogg"];
+
+        const mappedMedia: GalleryMediaItem[] = validFiles.map((file) => {
           const fullPath = `${targetFolder}/${file.name}`;
+          const isVideo = videoExtensions.some((ext) =>
+            file.name.toLowerCase().endsWith(ext),
+          );
+
           const cleanWorkType = file.name
             .replace(/\.[^/.]+$/, "")
             .replace(/^\d+[-_]/, "")
@@ -180,19 +200,24 @@ export default function ProjectSlugClient({ project }: { project: any }) {
             alt: `${project.title} — ${cleanWorkType}`,
             workType: cleanWorkType || "Premium Surface Execution",
             fileName: file.name,
+            isVideo,
           };
         });
 
-        setImages(mappedImages);
+        setMediaItems(mappedMedia);
       } catch (err) {
-        console.error("Slug image loading error:", err);
+        console.error("Slug media loading error:", err);
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchProjectImages();
+    fetchProjectMedia();
   }, [project]);
+
+  // Separate videos and images for clean grid presentation
+  const videos = mediaItems.filter((item) => item.isVideo);
+  const images = mediaItems.filter((item) => !item.isVideo);
 
   // 🗺️ Manual Location Resolution
   const projectTitleUpper = project.title.toUpperCase().trim();
@@ -203,14 +228,15 @@ export default function ProjectSlugClient({ project }: { project: any }) {
   const locationData = matchedCustomLocation
     ? CUSTOM_PROJECT_LOCATIONS[matchedCustomLocation]
     : {
-        displayLocation: project.location || "Delhi NCR, India",
-        mapsSearchQuery: `${project.title} ${project.location || "New Delhi India"}`,
+        displayLocation: project.location || "Chanakyapuri, New Delhi",
+        mapsSearchQuery: `${project.title} ${project.location || "Chanakyapuri New Delhi"}`,
       };
 
   const encodedMapQuery = encodeURIComponent(locationData.mapsSearchQuery);
 
   return (
     <div className="bg-stone-50 text-stone-900 font-sans min-h-screen">
+      {/* Header Banner */}
       <section className="relative bg-stone-900 text-white pt-28 sm:pt-32 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
           <Link
@@ -221,7 +247,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
           </Link>
 
           <span className="text-amber-500 text-xs tracking-widest font-extrabold uppercase block mb-2">
-            {project.category || "Commercial Domain"}
+            {project.category || "Government/Embassy"}
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white uppercase tracking-tight leading-tight">
             {project.title}
@@ -229,6 +255,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
         </div>
       </section>
 
+      {/* Key Project Details Bar */}
       <section className="bg-stone-950 text-white border-b border-stone-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-xs uppercase font-extrabold">
           <div>
@@ -243,16 +270,14 @@ export default function ProjectSlugClient({ project }: { project: any }) {
             <span className="text-stone-500 block text-[10px] mb-1">
               Completion Year
             </span>
-            <span className="text-stone-200">
-              {project.year || "Delivered Record"}
-            </span>
+            <span className="text-stone-200">{project.year || "2021"}</span>
           </div>
           <div>
             <span className="text-stone-500 block text-[10px] mb-1">
               Sector Domain
             </span>
             <span className="text-amber-500">
-              {project.category || "General Architectural"}
+              {project.category || "Government/Embassy"}
             </span>
           </div>
           <div>
@@ -264,6 +289,42 @@ export default function ProjectSlugClient({ project }: { project: any }) {
         </div>
       </section>
 
+      {/* 📹 VIDEO SECTION (Renders automatically if .mp4/.webm videos exist) */}
+      {videos.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 pt-16">
+          <div className="flex items-center gap-3 mb-8">
+            <span className="h-0.5 w-8 bg-amber-600 block" />
+            <h2 className="text-xl sm:text-2xl font-extrabold uppercase text-stone-900 tracking-tight">
+              Site Video Walkthroughs
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {videos.map((vid, idx) => (
+              <div
+                key={idx}
+                className="relative bg-stone-950 border border-stone-800 rounded-sm overflow-hidden shadow-lg group"
+              >
+                <video
+                  src={vid.src}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="w-full aspect-video object-cover"
+                />
+                <div className="p-4 bg-stone-900 border-t border-stone-800 flex items-center justify-between text-xs text-stone-300 font-extrabold uppercase">
+                  <span>🎬 {vid.workType}</span>
+                  <span className="text-amber-500 text-[10px]">
+                    Walkthrough Reel
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 🖼️ IMAGE GALLERY GRID */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-16">
         <h2 className="text-xl sm:text-2xl font-extrabold uppercase text-stone-900 tracking-tight mb-8">
           Execution Image Lookbook
@@ -296,7 +357,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
                     fill
                     loading="lazy"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className={`object-contain transition-all duration-500 ${
+                    className={`object-cover transition-all duration-500 ${
                       isActive
                         ? "brightness-50 scale-105"
                         : "brightness-95 group-hover:brightness-50 group-hover:scale-105"
