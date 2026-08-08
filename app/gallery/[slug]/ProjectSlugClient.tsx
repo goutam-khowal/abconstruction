@@ -19,12 +19,12 @@ const CUSTOM_PROJECT_LOCATIONS: Record<
   { displayLocation: string; mapsSearchQuery: string }
 > = {
   "TRADE FACILITATION CENTRE & CRAFT MUSEUM": {
-    displayLocation: "Varanasi (Banaras), Uttar Pradesh",
+    displayLocation: "Bada Lalpur, Varanasi, UP",
     mapsSearchQuery:
       "Deendayal Hastkala Sankul Trade Facilitation Centre Varanasi",
   },
   "SINGAPORE HIGH COMMISSION": {
-    displayLocation: "Chanakyapuri, New Delhi",
+    displayLocation: "Chanakyapuri, New Delhi, Delhi",
     mapsSearchQuery: "Singapore High Commission Chanakyapuri New Delhi",
   },
   AIIMS: {
@@ -32,15 +32,15 @@ const CUSTOM_PROJECT_LOCATIONS: Record<
     mapsSearchQuery: "AIIMS Hospital Delhi Ansari Nagar",
   },
   "CENTRAL VISTA": {
-    displayLocation: "Rajpath, New Delhi",
+    displayLocation: "Kartavya Path, New Delhi",
     mapsSearchQuery: "Central Vista Project Kartavya Path New Delhi",
   },
   "DHARAV HIGH SCHOOL": {
-    displayLocation: "Gurugram, Haryana",
+    displayLocation: "Sector 56, Gurugram, Haryana",
     mapsSearchQuery: "Dharav High School Gurugram",
   },
   "NACIN ACADEMY": {
-    displayLocation: "Palasamudram, Andhra Pradesh",
+    displayLocation: "Palasamudram, Sri Sathya Sai",
     mapsSearchQuery: "NACIN Campus Palasamudram Andhra Pradesh",
   },
   "SEBI BHAVAN": {
@@ -50,6 +50,14 @@ const CUSTOM_PROJECT_LOCATIONS: Record<
   "JAPAN EMBASSY": {
     displayLocation: "Chanakyapuri, New Delhi",
     mapsSearchQuery: "Embassy of Japan Chanakyapuri New Delhi",
+  },
+  "DLF CAMELLIAS": {
+    displayLocation: "Golf Course, Gurugram, Haryana",
+    mapsSearchQuery: "DLF Camellias Golf Course Road Gurugram",
+  },
+  "ACIL CMD": {
+    displayLocation: "Saket, New Delhi, Delhi",
+    mapsSearchQuery: "ACIL Saket New Delhi",
   },
 };
 
@@ -219,7 +227,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
   const videos = mediaItems.filter((item) => item.isVideo);
   const images = mediaItems.filter((item) => !item.isVideo);
 
-  // 🗺️ Manual Location Resolution
+  // 🗺️ Manual Location Resolution with Database Fallback
   const projectTitleUpper = project.title.toUpperCase().trim();
   const matchedCustomLocation = Object.keys(CUSTOM_PROJECT_LOCATIONS).find(
     (key) => projectTitleUpper.includes(key),
@@ -228,8 +236,8 @@ export default function ProjectSlugClient({ project }: { project: any }) {
   const locationData = matchedCustomLocation
     ? CUSTOM_PROJECT_LOCATIONS[matchedCustomLocation]
     : {
-        displayLocation: project.location || "Chanakyapuri, New Delhi",
-        mapsSearchQuery: `${project.title} ${project.location || "Chanakyapuri New Delhi"}`,
+        displayLocation: project.location || "New Delhi, India",
+        mapsSearchQuery: `${project.title} ${project.location || "New Delhi India"}`,
       };
 
   const encodedMapQuery = encodeURIComponent(locationData.mapsSearchQuery);
@@ -257,7 +265,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
 
       {/* Key Project Details Bar */}
       <section className="bg-stone-950 text-white border-b border-stone-800 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-xs uppercase font-extrabold">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs uppercase font-extrabold">
           <div>
             <span className="text-stone-500 block text-[10px] mb-1">
               Location
@@ -280,12 +288,14 @@ export default function ProjectSlugClient({ project }: { project: any }) {
               {project.category || "Government/Embassy"}
             </span>
           </div>
-          <div>
+          {/* <div>
             <span className="text-stone-500 block text-[10px] mb-1">
-              Surface Scope
+              Project Scope
             </span>
-            <span className="text-stone-200">Marble Laying & Polishing</span>
-          </div>
+            <span className="text-stone-200 line-clamp-1">
+              {project.description || "Marble Laying & Stone Cladding"}
+            </span>
+          </div> */}
         </div>
       </section>
 
@@ -357,7 +367,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
                     fill
                     loading="lazy"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className={`object-contain transition-all duration-500 ${
+                    className={`object-cover transition-all duration-500 ${
                       isActive
                         ? "brightness-50 scale-105"
                         : "brightness-95 group-hover:brightness-50 group-hover:scale-105"
