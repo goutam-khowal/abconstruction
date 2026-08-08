@@ -13,25 +13,25 @@ const projectCategories = [
   {
     label: "Commercial Projects",
     image:
-      "https://images.unsplash.com/photo-1762883608901-8b2d4ddd517e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fENvbW1lcmNpYWwlMjBidWlsZGluZyUyMG1hcmJsZXxlbnwwfHwwfHx8MA%3D%3D",
+      "https://images.unsplash.com/photo-1762883608901-8b2d4ddd517e?q=80&w=1200&auto=format&fit=crop",
     desc: "Office complexes, retail centers, luxury hotels, and corporate headquarters rendered with premium marble and granite finishes.",
   },
   {
     label: "Healthcare Projects",
     image:
-      "https://images.unsplash.com/photo-1505410603994-c3ac6269711f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aGVhbHRoY2FyZSUyMGJ1aWxkaW5nJTIwbWFyYmxlfGVufDB8fDB8fHww",
+      "https://images.unsplash.com/photo-1505410603994-c3ac6269711f?q=80&w=1200&auto=format&fit=crop",
     desc: "Hospitals and medical research facilities requiring durable, hygienic, and seamless floor and wall matrices.",
   },
   {
     label: "Residential Projects",
     image:
-      "https://images.unsplash.com/photo-1600421495550-158936f5ecfa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cmVzaWRlbnRpYWwlMjBidWlsZGluZyUyMG1hcmJsZXxlbnwwfHwwfHx8MA%3D%3D",
+      "https://images.unsplash.com/photo-1600421495550-158936f5ecfa?q=80&w=1200&auto=format&fit=crop",
     desc: "Luxury private residences, executive apartments, and villas transformed with Italian marble laying and precision polishing.",
   },
   {
     label: "Public & Institutional Projects",
     image:
-      "https://images.unsplash.com/photo-1785815815106-548c26f934b5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHB1YmxpYyUyMGJ1aWxkaW5nJTIwbWFyYmxlfGVufDB8fDB8fHww",
+      "https://images.unsplash.com/photo-1785815815106-548c26f934b5?q=80&w=1200&auto=format&fit=crop",
     desc: "Government headquarters, embassies, educational campuses, and public monuments engineered for high durability.",
   },
 ];
