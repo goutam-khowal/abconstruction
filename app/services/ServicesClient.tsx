@@ -13,25 +13,25 @@ const projectCategories = [
   {
     label: "Commercial Projects",
     image:
-      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/DLF%20CAMELLIAS%20GURUGRAM/01-dlf%20camellias%20gurugram.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9ETEYgQ0FNRUxMSUFTIEdVUlVHUkFNLzAxLWRsZiBjYW1lbGxpYXMgZ3VydWdyYW0ud2VicCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODYxMzk2ODcsImV4cCI6MTgxNzY3NTY4N30.yNo2AoAuE_1a11fPvr9eijozbB6H-YS53hkCAXXM7wU",
+      "https://images.unsplash.com/photo-1762883608901-8b2d4ddd517e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fENvbW1lcmNpYWwlMjBidWlsZGluZyUyMG1hcmJsZXxlbnwwfHwwfHx8MA%3D%3D",
     desc: "Office complexes, retail centers, luxury hotels, and corporate headquarters rendered with premium marble and granite finishes.",
   },
   {
     label: "Healthcare Projects",
     image:
-      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/AIIMS/01-Dholpur%20sandstone%20dry%20cladding%20by%20using%20clamp%20&%20fasteners.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9BSUlNUy8wMS1EaG9scHVyIHNhbmRzdG9uZSBkcnkgY2xhZGRpbmcgYnkgdXNpbmcgY2xhbXAgJiBmYXN0ZW5lcnMud2VicCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODYxMzk2NTgsImV4cCI6MTgxNzY3NTY1OH0.G9rwuv-_Inj97VrSRKbe0itHOYvEfmZ2LmT2b_9Hz6Q",
+      "https://images.unsplash.com/photo-1505410603994-c3ac6269711f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aGVhbHRoY2FyZSUyMGJ1aWxkaW5nJTIwbWFyYmxlfGVufDB8fDB8fHww",
     desc: "Hospitals and medical research facilities requiring durable, hygienic, and seamless floor and wall matrices.",
   },
   {
     label: "Residential Projects",
     image:
-      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/ACIL%20CMD%20SIR%20HOUSE/01-khareda%20stone%20cladding.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9BQ0lMIENNRCBTSVIgSE9VU0UvMDEta2hhcmVkYSBzdG9uZSBjbGFkZGluZy53ZWJwIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NjE0MDE1OCwiZXhwIjoxODE3Njc2MTU4fQ.X9NgVhS2v3nd8e-sV_9cHl-wETp1iK6vwEKcLKYOTvQ",
+      "https://images.unsplash.com/photo-1600421495550-158936f5ecfa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cmVzaWRlbnRpYWwlMjBidWlsZGluZyUyMG1hcmJsZXxlbnwwfHwwfHx8MA%3D%3D",
     desc: "Luxury private residences, executive apartments, and villas transformed with Italian marble laying and precision polishing.",
   },
   {
     label: "Public & Institutional Projects",
     image:
-      "https://cdcyuvyzdezofklnrkrq.supabase.co/storage/v1/object/sign/project-images/Central%20Vista%20Project/01-Central-Vista.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hYjQ4YmI2Yi1iYmM3LTRkZGYtYmEwOC03YzRhNWI1YTdhMzAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwcm9qZWN0LWltYWdlcy9DZW50cmFsIFZpc3RhIFByb2plY3QvMDEtQ2VudHJhbC1WaXN0YS53ZWJwIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NjEzOTQzMCwiZXhwIjoxODE3Njc1NDMwfQ.EvXLcVJV1eAncVmb80cu7U_Ey7Z3HeMnugvAMA7-EQE",
+      "https://images.unsplash.com/photo-1785815815106-548c26f934b5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHB1YmxpYyUyMGJ1aWxkaW5nJTIwbWFyYmxlfGVufDB8fDB8fHww",
     desc: "Government headquarters, embassies, educational campuses, and public monuments engineered for high durability.",
   },
 ];
