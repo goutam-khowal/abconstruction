@@ -216,7 +216,7 @@ export default function Navbar() {
             className="flex items-center gap-3 group min-h-[48px] focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-sm p-1"
           >
             <Image
-              src="/abcon.png"
+              src="/web-app-manifest-512x512.png"
               alt="A&B Construction Logo"
               width={38}
               height={30}

@@ -13,17 +13,26 @@ const jakartaFont = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "A&B Construction | Premier Stone & Marble Installation India",
   description:
-    "Expert laying and grinding of Italian, Onyx and granite marble& Dholpur stones, and high-performance tiles. Founded in 1977. Serving Delhi and across India.",
+    "Expert laying and grinding of Italian, Onyx and granite marble & Dholpur stones, and high-performance tiles. Founded in 1977. Serving Delhi and across India.",
   icons: {
     icon: [
-      { url: "/genfavicon-48.png", sizes: "48x48", type: "image/png" },
-      { url: "/genfavicon-512.png", sizes: "512x512", type: "image/png" },
       { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon0.png", type: "image/png" },
+      { url: "/icon1.png", type: "image/png" },
+      {
+        url: "/web-app-manifest-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/web-app-manifest-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
     ],
     apple: [
       {
-        url: "/apple-touch-icon-180x180.png",
-        sizes: "180x180",
+        url: "/apple-icon.png",
         type: "image/png",
       },
     ],
@@ -46,4 +55,3 @@ export default function RootLayout({
     </html>
   );
 }
-//

@@ -320,7 +320,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
                   controls
                   playsInline
                   preload="metadata"
-                  className="w-full aspect-video object-cover"
+                  className="w-full aspect-video object-contain"
                 />
                 <div className="p-4 bg-stone-900 border-t border-stone-800 flex items-center justify-between text-xs text-stone-300 font-extrabold uppercase">
                   <span>🎬 {vid.workType}</span>
@@ -367,7 +367,7 @@ export default function ProjectSlugClient({ project }: { project: any }) {
                     fill
                     loading="lazy"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className={`object-cover transition-all duration-500 ${
+                    className={`object-contain transition-all duration-500 ${
                       isActive
                         ? "brightness-50 scale-105"
                         : "brightness-95 group-hover:brightness-50 group-hover:scale-105"
