@@ -73,15 +73,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let projectSlugs: string[] = [];
 
   try {
-    const { data: dbProjects } = await supabase.from("projects").select("title");
-    
+    const { data: dbProjects } = await supabase
+      .from("projects")
+      .select("title");
+
     const allTitles = [
       ...FALLBACK_PROJECT_TITLES,
       ...(dbProjects?.map((p: { title: string }) => p.title) || []),
     ];
 
     projectSlugs = Array.from(
-      new Set(allTitles.map((title) => slugify(title)).filter(Boolean))
+      new Set(allTitles.map((title) => slugify(title)).filter(Boolean)),
     );
   } catch (error) {
     projectSlugs = FALLBACK_PROJECT_TITLES.map((title) => slugify(title));
