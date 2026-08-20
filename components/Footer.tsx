@@ -110,7 +110,7 @@ export default function Footer() {
           <div className="footer-brand-block md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <Image
-                src="/icon.png"
+                src="/icon1.png"
                 alt="A&B Construction Logo"
                 width={38}
                 height={30}
